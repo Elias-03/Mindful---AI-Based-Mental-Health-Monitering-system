@@ -1,0 +1,161 @@
+{% extends 'base_apple.html' %}
+
+{% block title %}Notifications - Mindful{% endblock %}
+
+{% block extra_css %}
+<style>
+    .notif-container {
+        width: 100%;
+        margin: 0 auto;
+    }
+    
+    .notif-card {
+        background: white;
+        border-radius: 18px;
+        padding: 24px;
+        margin-bottom: 16px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+        display: flex;
+        gap: 20px;
+        align-items: flex-start;
+        transition: transform 0.2s;
+        border-left: 4px solid transparent;
+    }
+    
+    .notif-card.unread {
+        background: #fdfdfd;
+        border-left-color: #0071e3;
+    }
+    
+    .notif-card:hover {
+        transform: translateY(-2px);
+    }
+    
+    .notif-icon {
+        font-size: 24px;
+        padding: 12px;
+        background: #f5f5f7;
+        border-radius: 12px;
+    }
+    
+    .notif-content {
+        flex: 1;
+    }
+    
+    .notif-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 8px;
+    }
+    
+    .notif-title {
+        font-weight: 600;
+        font-size: 17px;
+        color: #1d1d1f;
+    }
+    
+    .notif-time {
+        font-size: 13px;
+        color: #86868b;
+    }
+    
+    .notif-message {
+        font-size: 15px;
+        color: #424245;
+        line-height: 1.5;
+    }
+    
+    .notif-actions {
+        margin-top: 16px;
+        display: flex;
+        gap: 12px;
+    }
+    
+    .btn-small {
+        font-size: 13px;
+        padding: 6px 12px;
+        border-radius: 980px;
+        text-decoration: none;
+        font-weight: 500;
+        display: inline-block;
+    }
+    
+    .btn-small-primary {
+        background: #0071e3;
+        color: white;
+    }
+    
+    .btn-small-secondary {
+        background: #f5f5f7;
+        color: #1d1d1f;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="notif-container">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
+        <h1>Notifications</h1>
+    </div>
+
+    {% for notification in notifications %}
+    <div class="notif-card {% if not notification.is_read %}unread{% endif %}" id="notif-{{ notification.id }}">
+        <div class="notif-icon">
+            {% if notification.notification_type == 'mood_alert' %}⚠️{% else %}🔔{% endif %}
+        </div>
+        <div class="notif-content">
+            <div class="notif-header">
+                <span class="notif-title">{{ notification.title }}</span>
+                <span class="notif-time">{{ notification.created_at|timesince }} ago</span>
+            </div>
+            <p class="notif-message">{{ notification.message }}</p>
+            <div class="notif-actions">
+                {% if notification.link %}
+                <a href="{{ notification.link }}" class="btn-small btn-small-primary" onclick="markAsRead({{ notification.id }})">View Details</a>
+                {% endif %}
+                {% if not notification.is_read %}
+                <button class="btn-small btn-small-secondary" onclick="markAsRead({{ notification.id }})">Mark as Read</button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="card" style="text-align: center; padding: 60px;">
+        <div style="font-size: 48px; margin-bottom: 20px;">📭</div>
+        <p style="color: #86868b;">No notifications yet.</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function markAsRead(id) {
+    fetch(`/notifications/mark-read/${id}/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}',
+        }
+    }).then(response => {
+        if (response.ok) {
+            const card = document.getElementById(`notif-${id}`);
+            card.classList.remove('unread');
+            const btn = card.querySelector('button');
+            if (btn) btn.remove();
+            
+            // Update badge
+            const badge = document.getElementById('notifBadge');
+            if (badge) {
+                let count = parseInt(badge.textContent);
+                count--;
+                if (count <= 0) {
+                    badge.style.display = 'none';
+                } else {
+                    badge.textContent = count;
+                }
+            }
+        }
+    });
+}
+</script>
+{% endblock %}

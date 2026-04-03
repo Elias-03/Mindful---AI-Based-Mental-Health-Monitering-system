@@ -1,0 +1,100 @@
+Project Synopsis
+Title: Design and Implementation of an AI-Powered Mental
+Health Monitoring System Using Transformer Models for
+Emotion and Sentiment Analysis [ AI-based Mental Health
+Monitoring System ].
+Methodology & System Architecture
+The project uses a clear model-focused design with special
+transformer models built for emotion detection, sentiment
+analysis, and understanding text related to mental health.
+High-Level Architecture
+● Frontend: A simple and secure web app made with Django.
+It uses plain HTML, CSS, and JavaScript for the user
+interface. Users can log in, write journal entries, see charts,
+and interact easily.
+● Backend & Analysis Layer: Django handles the main logic.
+It runs a pipeline that uses transformer models to detect
+emotions and sentiment from journal text.
+● Database Layer: Supabase (a cloud PostgreSQL service)
+stores user mood data safely. It keeps logs like timestamp,
+summary of entry (anonymized), emotion scores, sentiment
+score, and alert flags. This allows tracking changes over
+time, real-time sync, and access from different devices.
+● Alert & Insight Layer: Simple rules combined with model
+results create helpful notifications and suggestions when
+needed.
+Selected Models & Rationale
+We use these models for emotion and sentiment analysis:
+● Main Model: mental-roberta-base (fallback:
+mental-bert-base-uncased) from the MentalBERT family.
+○ These models were trained further on large amounts of
+mental health text (like posts about depression, anxiety,
+and support groups).
+○ They are good at finding small signs of stress, negative
+thinking patterns, and mixed feelings in personal writing
+better than regular models for this use.
+○ Size: RoBERTa-base style (~125 million parameters)
+fast enough to run, understands context well, and works
+with casual language.
+○ How we use it: For classifying emotions (sadness, fear,
+anger, joy, etc.) and giving probability scores.
+● Options for later improvements:
+○ For more detailed emotions (like 27+ types including
+annoyance, grief, admiration):
+roberta-base-go_emotions (trained on the GoEmotions
+dataset).
+○ For support in multiple languages or mixed
+English-Hindi (Hinglish):
+twitter-xlm-roberta-base-sentiment or similar models
+made for Indic languages.
+These models give good results (usually 80–92% accurate on
+emotion tests) with low computer needs. They fit well for mental
+health use and follow ethical guidelines.
+Data Storage & Privacy
+● Database: Supabase (open-source platform based on
+PostgreSQL).
+○ Why Supabase: It gives managed PostgreSQL with
+real-time updates, row-level security, and easy growth
+from prototype to many users.
+○ Example table: mood_logs with fields like id, user_id
+(from login), timestamp, entry_summary (made
+anonymous), emotions_json, dominant_emotion,
+sentiment_score, alert_level, alert_text.
+○ How it connects: Django uses the Supabase Python
+client to save and read data; Pandas helps analyze
+trends in memory; real-time features update charts live;
+users can export their data as CSV.
+○ Privacy: Each user only sees their own data (thanks to
+row-level security). We collect very little data. There are
+clear notes that this is not a replacement for
+professional help. Data is encrypted in transit and at
+rest. Users control their data and can delete it. Later
+versions can add end-to-end encryption for entries.
+How It Works (Step by Step)
+1. User logs in using Supabase Auth (connected to Django).
+2. User writes a journal entry → Django sends it to the model
+→ Model returns emotion probabilities (sadness, fear, anger,
+joy, etc.) and sentiment score.
+3. System picks the main emotion and checks its strength +
+overall sentiment.
+4. Simple rules trigger alerts (example: if negative emotions
+stay high for many days → show message like "Consider
+talking to a friend or professional").
+5. Save the results in Supabase → Update charts on the page
+(time-based line or bar charts using JavaScript libraries like
+Chart.js) with real-time refresh.
+Advantages of This Approach
+● Uses models trained specially for mental health text they
+understand feelings and moods better than normal models.
+● Gets good performance without building or training models
+from scratch.
+● Django gives a solid web backend, Supabase handles
+secure and fast data storage easy to build, low cost to run,
+private by design, and ready to grow.
+Limitations & Future Work
+● Models may not handle heavy Hinglish (mixed Hindi-English)
+well → Fix later with Indic or multilingual models.
+● Needs internet because of Supabase → Add offline support
+(local storage like IndexedDB or browser cache) in future.
+● Current Supabase setup is good for testing → For many
+users, move to a bigger plan or self-hosted version.

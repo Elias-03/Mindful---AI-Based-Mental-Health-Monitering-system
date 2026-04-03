@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+
+{% block title %}History - Mental Health Monitor{% endblock %}
+
+{% block extra_css %}
+<style>
+    .history-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+    .timeline {
+        position: relative;
+        padding-left: 40px;
+    }
+    .timeline::before {
+        content: '';
+        position: absolute;
+        left: 15px;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: #e5e7eb;
+    }
+    .timeline-item {
+        position: relative;
+        background: white;
+        padding: 20px;
+        margin-bottom: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .timeline-item::before {
+        content: '';
+        position: absolute;
+        left: -32px;
+        top: 25px;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: #4c51bf;
+        border: 3px solid white;
+    }
+    .timeline-date {
+        font-size: 14px;
+        color: #6b7280;
+        margin-bottom: 8px;
+    }
+    .emotion-badge {
+        display: inline-block;
+        padding: 6px 12px;
+        background: #dbeafe;
+        color: #1e40af;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 600;
+    }
+    .sentiment-bar {
+        height: 8px;
+        background: #e5e7eb;
+        border-radius: 4px;
+        margin-top: 10px;
+        overflow: hidden;
+    }
+    .sentiment-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #ef4444, #fbbf24, #10b981);
+        transition: width 0.3s;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="history-header">
+    <div>
+        <h2>📊 Entry History</h2>
+        <p style="color: #6b7280; margin-top: 5px;">Your emotional journey over time</p>
+    </div>
+    <a href="{% url 'journal:new_entry' %}" class="btn">+ New Entry</a>
+</div>
+
+<div class="timeline">
+    {% for log in logs %}
+    <div class="timeline-item">
+        <div class="timeline-date">{{ log.timestamp|date:"F d, Y - g:i A" }}</div>
+        <div style="margin: 10px 0;">
+            <span class="emotion-badge">{{ log.dominant_emotion|title }}</span>
+        </div>
+        <p style="color: #374151; margin: 10px 0;">{{ log.entry_summary }}</p>
+        <div style="display: flex; align-items: center; gap: 10px; margin-top: 10px;">
+            <span style="font-size: 12px; color: #6b7280;">Sentiment:</span>
+            <div class="sentiment-bar" style="flex: 1;">
+                <div class="sentiment-fill" style="width: {{ log.sentiment_score|add:1|floatformat:0|add:'0' }}%;"></div>
+            </div>
+            <span style="font-size: 12px; color: #6b7280;">{{ log.sentiment_score|floatformat:2 }}</span>
+        </div>
+        {% if log.alert_text %}
+        <div class="alert alert-warning" style="margin-top: 15px;">
+            {{ log.alert_text }}
+        </div>
+        {% endif %}
+    </div>
+    {% empty %}
+    <div style="text-align: center; padding: 60px 20px; color: #6b7280;">
+        <p style="font-size: 18px; margin-bottom: 20px;">No entries yet</p>
+        <a href="{% url 'journal:new_entry' %}" class="btn">Create Your First Entry</a>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
