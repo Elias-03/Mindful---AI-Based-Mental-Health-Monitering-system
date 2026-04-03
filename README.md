@@ -3,7 +3,7 @@
 Mindful is a modern, AI-powered mental health monitoring system designed to help users track their emotional well-being through journaling and advanced sentiment analysis.
 
 Created by **[Blessing Zimbango Elias](https://www.linkedin.com/in/blessing-zimbango-elias/)**
-
+## copy Structure ye '.env'  from .env.example and use your own api keys
 ## ✨ Features
 - 🤖 **AI Emotion Analysis**: Real-time sentiment detection using MentalBERT models.
 - 📊 **Visual Mood Trends**: Beautiful, interactive charts to track your emotional journey.
