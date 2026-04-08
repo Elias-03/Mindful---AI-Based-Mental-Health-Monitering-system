@@ -1,0 +1,147 @@
+{% extends 'base_apple.html' %}
+
+{% block title %}Edit Profile - Mindful{% endblock %}
+
+{% block extra_css %}
+<style>
+    .edit-container {
+        width: 100%;
+        margin: 0 auto;
+    }
+    
+    .profile-preview {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+    
+    .preview-avatar {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-bottom: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    .form-group {
+        margin-bottom: 24px;
+    }
+    
+    .form-label {
+        display: block;
+        font-size: 14px;
+        font-weight: 500;
+        color: #1d1d1f;
+        margin-bottom: 8px;
+    }
+    
+    .form-input {
+        width: 100%;
+        padding: 14px 16px;
+        border: 1px solid #d2d2d7;
+        border-radius: 12px;
+        font-size: 16px;
+        font-family: inherit;
+        transition: all 0.2s;
+        background: white;
+    }
+    
+    .form-input:focus {
+        outline: none;
+        border-color: #0071e3;
+        box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.1);
+    }
+    
+    .file-input-wrapper {
+        position: relative;
+        overflow: hidden;
+        display: inline-block;
+    }
+    
+    .file-input-wrapper input[type=file] {
+        position: absolute;
+        left: -9999px;
+    }
+    
+    .file-input-label {
+        display: inline-block;
+        padding: 12px 24px;
+        background: #f5f5f7;
+        color: #1d1d1f;
+        border-radius: 980px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        transition: all 0.2s;
+    }
+    
+    .file-input-label:hover {
+        background: #e8e8ed;
+    }
+    
+    .button-group {
+        display: flex;
+        gap: 12px;
+        margin-top: 32px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="edit-container">
+    <div class="card">
+        <h2>Edit Profile</h2>
+        <p class="subtitle" style="margin-bottom: 32px;">Update your personal information</p>
+        
+        <div class="profile-preview">
+            <img src="{{ profile.get_avatar_url }}" alt="{{ user.username }}" class="preview-avatar" id="avatarPreview">
+        </div>
+        
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label class="form-label">Profile Picture</label>
+                <div class="file-input-wrapper">
+                    <input type="file" name="profile_picture" id="profilePicture" accept="image/*">
+                    <label for="profilePicture" class="file-input-label">Choose Photo</label>
+                </div>
+                <p style="font-size: 13px; color: #86868b; margin-top: 8px;">JPG, PNG or GIF. Max 5MB.</p>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label" for="first_name">First Name</label>
+                <input type="text" name="first_name" id="first_name" class="form-input" value="{{ user.first_name }}">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label" for="last_name">Last Name</label>
+                <input type="text" name="last_name" id="last_name" class="form-input" value="{{ user.last_name }}">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label" for="email">Email</label>
+                <input type="email" name="email" id="email" class="form-input" value="{{ user.email }}">
+            </div>
+            
+            <div class="button-group">
+                <button type="submit" class="btn-primary">Save Changes</button>
+                <a href="{% url 'journal:profile' %}" class="btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+document.getElementById('profilePicture').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('avatarPreview').src = e.target.result;
+        }
+        reader.readAsDataURL(file);
+    }
+});
+</script>
+{% endblock %}

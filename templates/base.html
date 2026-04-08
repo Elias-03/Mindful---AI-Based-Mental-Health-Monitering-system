@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Mental Health Monitor{% endblock %}</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        nav {
+            background: #4c51bf;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        nav h1 { color: white; font-size: 24px; }
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            transition: background 0.3s;
+        }
+        nav a:hover { background: rgba(255,255,255,0.2); }
+        .content { padding: 40px; }
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .alert-warning {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            color: #92400e;
+        }
+        .alert-info {
+            background: #dbeafe;
+            border-left: 4px solid #3b82f6;
+            color: #1e40af;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: #4c51bf;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+        .btn:hover { background: #434190; }
+        .disclaimer {
+            background: #fef3c7;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #92400e;
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <h1>🧠 Mental Health Monitor</h1>
+            {% if user.is_authenticated %}
+            <ul>
+                <li><a href="{% url 'journal:dashboard' %}">Dashboard</a></li>
+                <li><a href="{% url 'journal:new_entry' %}">New Entry</a></li>
+                <li><a href="{% url 'journal:history' %}">History</a></li>
+                <li><a href="{% url 'admin:logout' %}">Logout</a></li>
+            </ul>
+            {% endif %}
+        </nav>
+        <div class="content">
+            {% block content %}{% endblock %}
+            <div class="disclaimer">
+                ⚠️ This tool is for self-reflection only and is not a substitute for professional mental health care.
+                If you're experiencing a crisis, please contact a mental health professional or crisis helpline.
+            </div>
+        </div>
+    </div>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

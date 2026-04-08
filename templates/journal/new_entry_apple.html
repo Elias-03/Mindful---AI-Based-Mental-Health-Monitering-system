@@ -1,0 +1,262 @@
+{% extends 'base_apple.html' %}
+
+{% block title %}New Entry - Mindful{% endblock %}
+
+{% block extra_css %}
+<style>
+    .entry-container {
+        width: 100%;
+        margin: 0 auto;
+    }
+    
+    .hero-section {
+        text-align: center;
+        margin-bottom: 48px;
+    }
+    
+    .tips-card {
+        background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+        border-radius: 18px;
+        padding: 24px;
+        margin-bottom: 32px;
+        border: 1px solid #bbf7d0;
+    }
+    
+    .tips-title {
+        font-size: 17px;
+        font-weight: 600;
+        color: #166534;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .tips-list {
+        list-style: none;
+        color: #166534;
+        font-size: 14px;
+    }
+    
+    .tips-list li {
+        padding: 6px 0;
+        padding-left: 24px;
+        position: relative;
+    }
+    
+    .tips-list li::before {
+        content: '✓';
+        position: absolute;
+        left: 0;
+        font-weight: 600;
+    }
+    
+    .form-group {
+        margin-bottom: 24px;
+    }
+    
+    .form-label {
+        display: block;
+        font-size: 17px;
+        font-weight: 600;
+        color: #1d1d1f;
+        margin-bottom: 12px;
+    }
+    
+    .form-textarea {
+        width: 100%;
+        padding: 16px;
+        border: 1px solid #d2d2d7;
+        border-radius: 16px;
+        font-size: 16px;
+        font-family: inherit;
+        resize: vertical;
+        min-height: 280px;
+        transition: all 0.2s;
+        line-height: 1.6;
+    }
+    
+    .form-textarea:focus {
+        outline: none;
+        border-color: #0071e3;
+        box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.1);
+    }
+    
+    .char-count {
+        text-align: right;
+        font-size: 13px;
+        color: #86868b;
+        margin-top: 8px;
+    }
+    
+    .button-group {
+        display: flex;
+        gap: 12px;
+        margin-top: 32px;
+    }
+
+    @media (max-width: 480px) {
+        .button-group {
+            flex-direction: column;
+        }
+        .btn-analyze, .btn-cancel {
+            width: 100%;
+            text-align: center;
+        }
+        .hero-section h1 {
+            font-size: 28px;
+        }
+        .form-textarea {
+            min-height: 200px;
+        }
+    }
+    
+    .btn-analyze {
+        background: linear-gradient(135deg, #0071e3 0%, #00d2ff 100%);
+        color: white;
+        padding: 14px 40px;
+        border-radius: 980px;
+        border: none;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        box-shadow: 0 4px 16px rgba(0, 113, 227, 0.3);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .btn-analyze:hover {
+        transform: translateY(-2px) scale(1.02);
+        box-shadow: 0 8px 24px rgba(0, 113, 227, 0.4);
+    }
+
+    .btn-analyze::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.2),
+            transparent
+        );
+        transition: 0.5s;
+    }
+
+    .btn-analyze:hover::before {
+        left: 100%;
+    }
+    
+    .btn-analyze:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+    }
+    
+    .btn-cancel {
+        background: #f5f5f7;
+        color: #1d1d1f;
+        padding: 14px 32px;
+        border-radius: 980px;
+        text-decoration: none;
+        font-size: 16px;
+        font-weight: 500;
+        transition: all 0.2s;
+        display: inline-block;
+    }
+    
+    .btn-cancel:hover {
+        background: #e8e8ed;
+    }
+    
+    .loading-spinner {
+        display: none;
+        margin-left: 8px;
+    }
+    
+    .loading-spinner.show {
+        display: inline-block;
+        animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="entry-container">
+    <div class="hero-section">
+        <h1>How are you feeling?</h1>
+        <p class="subtitle">Share your thoughts and let AI understand your emotions</p>
+    </div>
+    
+    <div class="tips-card">
+        <div class="tips-title">
+            <span>💡</span>
+            <span>Writing Tips</span>
+        </div>
+        <ul class="tips-list">
+            <li>Be honest and authentic with your feelings</li>
+            <li>Write freely without worrying about grammar</li>
+            <li>Describe specific events or situations</li>
+            <li>Note physical sensations or body feelings</li>
+        </ul>
+    </div>
+    
+    <div class="card">
+        <form method="post" id="entryForm">
+            {% csrf_token %}
+            <div class="form-group">
+                <label class="form-label" for="entry_text">Your Journal Entry</label>
+                <textarea 
+                    name="entry_text" 
+                    id="entry_text" 
+                    class="form-textarea"
+                    placeholder="Start writing your thoughts here..."
+                    required
+                ></textarea>
+                <div class="char-count">
+                    <span id="charCount">0</span> characters
+                </div>
+            </div>
+            
+            <div class="button-group">
+                <button type="submit" class="btn-analyze" id="submitBtn">
+                    <span id="btnText">✨ AI Analysis & Save</span>
+                    <span class="loading-spinner" id="spinner">⚡</span>
+                </button>
+                <a href="{% url 'journal:dashboard' %}" class="btn-cancel">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+const textarea = document.getElementById('entry_text');
+const charCount = document.getElementById('charCount');
+const form = document.getElementById('entryForm');
+const submitBtn = document.getElementById('submitBtn');
+const btnText = document.getElementById('btnText');
+const spinner = document.getElementById('spinner');
+
+textarea.addEventListener('input', function() {
+    charCount.textContent = this.value.length;
+});
+
+form.addEventListener('submit', function() {
+    submitBtn.disabled = true;
+    btnText.textContent = 'Analyzing';
+    spinner.classList.add('show');
+});
+</script>
+{% endblock %}

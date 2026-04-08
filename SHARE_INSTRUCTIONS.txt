@@ -1,0 +1,63 @@
+HOW TO SHARE THIS PROJECT
+=========================
+
+SIMPLE METHOD (Everything Included):
+------------------------------------
+1. Zip the ENTIRE folder (including venv and .env)
+2. Share the ZIP file
+3. Recipients extract and double-click: START.bat
+4. Visit: http://127.0.0.1:8000/login/
+5. Login: testuser / test123
+
+That's it! No setup needed.
+
+
+SMALLER PACKAGE (Without venv):
+--------------------------------
+1. Delete the "venv" folder
+2. Zip the folder
+3. Share the ZIP
+4. Recipients:
+   - Extract the ZIP
+   - Double-click: quick_setup.bat
+   - Then double-click: START.bat
+   - Visit: http://127.0.0.1:8000/login/
+
+
+WHAT'S INCLUDED:
+----------------
+✅ All code and templates
+✅ .env file (Supabase credentials)
+✅ Database already set up (in Supabase)
+✅ User account: testuser / test123
+✅ Apple-inspired UI
+✅ Profile picture upload
+✅ AI emotion analysis
+
+
+NO CONFIGURATION NEEDED:
+-------------------------
+- Database is already set up (Supabase)
+- Tables already exist
+- User accounts work immediately
+- Just run and go!
+
+
+REQUIREMENTS:
+-------------
+- Python 3.8+ installed
+- Internet connection (for AI model download on first use)
+- ~2GB disk space
+
+
+TROUBLESHOOTING:
+----------------
+If "quick_setup.bat" doesn't work in PowerShell:
+  Type: .\quick_setup.bat
+
+If "START.bat" doesn't work:
+  Type: .\START.bat
+
+Or manually:
+  venv\Scripts\activate
+  python manage.py runserver

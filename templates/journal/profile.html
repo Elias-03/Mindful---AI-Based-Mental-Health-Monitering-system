@@ -1,0 +1,142 @@
+{% extends 'base_apple.html' %}
+
+{% block title %}Profile - Mindful{% endblock %}
+
+{% block extra_css %}
+<style>
+    .profile-header {
+        text-align: center;
+        padding: 40px 0;
+    }
+    
+    .profile-avatar {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    .profile-name {
+        font-size: 32px;
+        font-weight: 600;
+        margin-bottom: 8px;
+    }
+    
+    .profile-email {
+        color: #86868b;
+        font-size: 17px;
+    }
+    
+    .profile-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 24px;
+        margin-top: 40px;
+    }
+    
+    .profile-card {
+        background: white;
+        border-radius: 18px;
+        padding: 32px;
+        box-shadow: 0 2px 16px rgba(0, 0, 0, 0.06);
+    }
+    
+    .profile-card h3 {
+        font-size: 22px;
+        font-weight: 600;
+        margin-bottom: 16px;
+    }
+    
+    .profile-card p {
+        color: #86868b;
+        margin-bottom: 20px;
+        font-size: 15px;
+    }
+    
+    .stat-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 16px 0;
+        border-bottom: 1px solid #f5f5f7;
+    }
+    
+    .stat-row:last-child {
+        border-bottom: none;
+    }
+    
+    .stat-label {
+        color: #86868b;
+        font-size: 15px;
+    }
+    
+    .stat-value {
+        font-weight: 600;
+        font-size: 17px;
+    }
+    
+    .action-buttons {
+        display: flex;
+        gap: 12px;
+        margin-top: 24px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="profile-header">
+    <img src="{{ profile.get_avatar_url }}" alt="{{ user.username }}" class="profile-avatar">
+    <div class="profile-name">{{ user.get_full_name|default:user.username }}</div>
+    <div class="profile-email">{{ user.email|default:"No email set" }}</div>
+</div>
+
+<div class="profile-grid">
+    <div class="profile-card">
+        <h3>Account Settings</h3>
+        <p>Manage your account information and preferences</p>
+        
+        <div class="stat-row">
+            <span class="stat-label">Username</span>
+            <span class="stat-value">{{ user.username }}</span>
+        </div>
+        <div class="stat-row">
+            <span class="stat-label">Member since</span>
+            <span class="stat-value">{{ user.date_joined|date:"M d, Y" }}</span>
+        </div>
+        
+        <div class="action-buttons">
+            <a href="{% url 'journal:edit_profile' %}" class="btn-primary">Edit Profile</a>
+            <a href="{% url 'journal:change_password' %}" class="btn-secondary">Change Password</a>
+        </div>
+    </div>
+    
+    <div class="profile-card">
+        <h3>Your Journey</h3>
+        <p>Track your mental health progress</p>
+        
+        <div class="stat-row">
+            <span class="stat-label">Total Entries</span>
+            <span class="stat-value">{{ user.moodlog_set.count }}</span>
+        </div>
+        <div class="stat-row">
+            <span class="stat-label">Current Streak</span>
+            <span class="stat-value">{{ user.moodlog_set.count }} days</span>
+        </div>
+        <div class="stat-row">
+            <span class="stat-label">Last Entry</span>
+            <span class="stat-value">
+                {% if user.moodlog_set.first %}
+                    {{ user.moodlog_set.first.timestamp|date:"M d" }}
+                {% else %}
+                    Never
+                {% endif %}
+            </span>
+        </div>
+        
+        <div class="action-buttons">
+            <a href="{% url 'journal:new_entry' %}" class="btn-primary">New Entry</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
