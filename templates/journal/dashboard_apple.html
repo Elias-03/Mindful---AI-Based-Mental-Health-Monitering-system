@@ -4,11 +4,293 @@
 
 {% block extra_css %}
 <style>
+    * {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
     .hero {
         text-align: center;
-        padding: 60px 0 40px;
+        padding: 40px 0 30px;
     }
-    
+
+    .hero h1 {
+        font-size: 40px;
+        font-weight: 700;
+        letter-spacing: -0.03em;
+        margin-bottom: 8px;
+    }
+
+    /* Premium AI Chatbot Card */
+    .ai-chatbot-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 24px;
+        padding: 2px;
+        margin-bottom: 40px;
+        box-shadow: 0 20px 60px rgba(102, 126, 234, 0.3);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .ai-chatbot-section::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+        animation: shimmer 3s infinite;
+    }
+
+    @keyframes shimmer {
+        0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+        100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+    }
+
+    .ai-chatbot-inner {
+        background: #ffffff;
+        border-radius: 22px;
+        padding: 32px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .ai-header {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 24px;
+    }
+
+    .ai-icon-wrapper {
+        width: 56px;
+        height: 56px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+        animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+    }
+
+    .ai-title-section h2 {
+        margin: 0;
+        font-size: 24px;
+        font-weight: 700;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .ai-subtitle {
+        margin: 4px 0 0;
+        font-size: 13px;
+        color: #86868b;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .status-dot {
+        width: 8px;
+        height: 8px;
+        background: #34c759;
+        border-radius: 50%;
+        animation: blink 2s ease-in-out infinite;
+    }
+
+    @keyframes blink {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.3; }
+    }
+
+    .chat-container {
+        height: 420px;
+        overflow-y: auto;
+        margin-bottom: 20px;
+        padding: 24px;
+        background: linear-gradient(to bottom, #fafafa 0%, #ffffff 100%);
+        border-radius: 16px;
+        border: 1px solid #f0f0f0;
+        scroll-behavior: smooth;
+    }
+
+    .chat-container::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .chat-container::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .chat-container::-webkit-scrollbar-thumb {
+        background: #d2d2d7;
+        border-radius: 10px;
+    }
+
+    .message {
+        margin-bottom: 20px;
+        display: flex;
+        gap: 12px;
+        animation: slideIn 0.3s ease-out;
+    }
+
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .message.user {
+        flex-direction: row-reverse;
+    }
+
+    .message-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        flex-shrink: 0;
+    }
+
+    .message.bot .message-avatar {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+
+    .message.user .message-avatar {
+        background: linear-gradient(135deg, #0071e3 0%, #00a8ff 100%);
+        box-shadow: 0 4px 12px rgba(0, 113, 227, 0.3);
+    }
+
+    .message-content {
+        max-width: 70%;
+        padding: 14px 18px;
+        border-radius: 20px;
+        font-size: 15px;
+        line-height: 1.5;
+        position: relative;
+    }
+
+    .message.bot .message-content {
+        background: white;
+        color: #1d1d1f;
+        border: 1px solid #e5e5e7;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    }
+
+    .message.user .message-content {
+        background: linear-gradient(135deg, #0071e3 0%, #00a8ff 100%);
+        color: white;
+        box-shadow: 0 4px 16px rgba(0, 113, 227, 0.3);
+    }
+
+    .typing-indicator {
+        display: none;
+        padding: 14px 18px;
+        background: white;
+        border: 1px solid #e5e5e7;
+        border-radius: 20px;
+        width: fit-content;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    }
+
+    .typing-indicator.active {
+        display: flex;
+        gap: 4px;
+        animation: slideIn 0.3s ease-out;
+    }
+
+    .typing-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        animation: typing 1.4s infinite;
+    }
+
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes typing {
+        0%, 60%, 100% {
+            transform: translateY(0);
+            opacity: 0.7;
+        }
+        30% {
+            transform: translateY(-10px);
+            opacity: 1;
+        }
+    }
+
+    .chat-input-wrapper {
+        display: flex;
+        gap: 12px;
+        position: relative;
+    }
+
+    .chat-input {
+        flex: 1;
+        padding: 16px 20px;
+        border: 2px solid #e5e5e7;
+        border-radius: 24px;
+        font-size: 15px;
+        outline: none;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        background: #fafafa;
+    }
+
+    .chat-input:focus {
+        border-color: #667eea;
+        background: white;
+        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+    }
+
+    .chat-send-btn {
+        padding: 16px 32px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 24px;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
+    }
+
+    .chat-send-btn:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+    }
+
+    .chat-send-btn:active:not(:disabled) {
+        transform: translateY(0);
+    }
+
+    .chat-send-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    /* Stats Grid */
     .stats-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -16,67 +298,33 @@
         margin-bottom: 40px;
     }
 
-    @media (max-width: 600px) {
-        .stats-grid {
-            grid-template-columns: 1fr;
-        }
-        .hero h1 {
-            font-size: 28px;
-        }
-        .stat-card {
-            padding: 24px;
-        }
-        .stat-value {
-            font-size: 36px;
-        }
-        .chart-card, .recent-section {
-            padding: 24px 16px;
-        }
-    }
-    
     .stat-card {
-        background: rgba(255, 255, 255, 0.7);
+        background: rgba(255, 255, 255, 0.8);
         backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
         border: 1px solid rgba(0, 113, 227, 0.1);
-        padding: 32px;
-        border-radius: 24px;
-        color: #1d1d1f;
-        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
-        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        position: relative;
-        overflow: hidden;
+        padding: 28px;
+        border-radius: 20px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
     }
-    
+
     .stat-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 12px 40px rgba(0, 113, 227, 0.12);
+        transform: translateY(-4px);
+        box-shadow: 0 12px 32px rgba(0, 113, 227, 0.12);
         border-color: rgba(0, 113, 227, 0.3);
     }
 
-    .stat-card::before {
-        content: 'AI';
-        position: absolute;
-        top: 10px;
-        right: 15px;
-        font-size: 10px;
-        font-weight: 800;
-        color: #0071e3;
-        opacity: 0.3;
-        letter-spacing: 1px;
-    }
-    
     .stat-label {
-        font-size: 14px;
+        font-size: 13px;
         color: #86868b;
         margin-bottom: 8px;
-        font-weight: 500;
+        font-weight: 600;
         text-transform: uppercase;
         letter-spacing: 0.5px;
     }
-    
+
     .stat-value {
-        font-size: 48px;
+        font-size: 42px;
         font-weight: 700;
         letter-spacing: -0.02em;
         background: linear-gradient(135deg, #1d1d1f 0%, #0071e3 100%);
@@ -84,23 +332,19 @@
         background-clip: text;
         -webkit-text-fill-color: transparent;
     }
-    
-    .chart-card {
+
+    .chart-card, .recent-section {
         background: white;
-        border-radius: 18px;
+        border-radius: 20px;
         padding: 32px;
         box-shadow: 0 2px 16px rgba(0, 0, 0, 0.06);
         margin-bottom: 32px;
     }
-    
+
     .chart-title {
         font-size: 22px;
         font-weight: 600;
-        margin-bottom: 24px;
-    }
-    
-    canvas {
-        max-height: 400px;
+        margin-bottom: 20px;
     }
 
     .chart-container {
@@ -109,58 +353,45 @@
         width: 100%;
     }
 
-    @media (max-width: 600px) {
-        .chart-container {
-            height: 240px;
-        }
-    }
-    
-    .recent-section {
-        background: white;
-        border-radius: 18px;
-        padding: 32px;
-        box-shadow: 0 2px 16px rgba(0, 0, 0, 0.06);
-    }
-    
     .log-item {
         padding: 20px;
         border-bottom: 1px solid #f5f5f7;
-        transition: background 0.2s;
+        transition: all 0.2s;
     }
-    
-    .log-item:last-child {
-        border-bottom: none;
-    }
-    
+
     .log-item:hover {
         background: #fafafa;
+        transform: translateX(4px);
     }
-    
+
     .log-date {
         font-size: 13px;
         color: #86868b;
         margin-bottom: 8px;
     }
-    
+
     .emotion-badge {
         display: inline-block;
         padding: 6px 14px;
-        background: #f5f5f7;
+        background: linear-gradient(135deg, #f5f5f7 0%, #e5e5e7 100%);
         border-radius: 980px;
         font-size: 13px;
         font-weight: 500;
         color: #1d1d1f;
     }
-    
+
     .empty-state {
         text-align: center;
-        padding: 80px 20px;
+        padding: 60px 20px;
         color: #86868b;
     }
-    
-    .empty-state-icon {
-        font-size: 64px;
-        margin-bottom: 16px;
+
+    @media (max-width: 768px) {
+        .hero h1 { font-size: 32px; }
+        .ai-chatbot-inner { padding: 24px 20px; }
+        .chat-container { height: 350px; }
+        .message-content { max-width: 85%; }
+        .stats-grid { grid-template-columns: 1fr; }
     }
 </style>
 {% endblock %}
@@ -168,7 +399,49 @@
 {% block content %}
 <div class="hero">
     <h1>Welcome back, {{ user.first_name|default:user.username }}</h1>
-    <p class="subtitle">Here's your mental wellness overview</p>
+    <p class="subtitle">Your AI-powered mental wellness companion</p>
+</div>
+
+<!-- Premium AI Chatbot -->
+<div class="ai-chatbot-section">
+    <div class="ai-chatbot-inner">
+        <div class="ai-header">
+            <div class="ai-icon-wrapper">✨</div>
+            <div class="ai-title-section">
+                <h2>AI Wellness Companion</h2>
+                <div class="ai-subtitle">
+                    <span class="status-dot"></span>
+                    <span>Powered by Advanced AI • Always here for you</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="chat-container" id="chatContainer">
+            <div class="message bot">
+                <div class="message-avatar">🤖</div>
+                <div class="message-content">
+                    Hi there! I'm your AI wellness companion, powered by cutting-edge technology. How are you feeling today? I'm here to listen and support you. 💙
+                </div>
+            </div>
+        </div>
+        
+        <div class="typing-indicator" id="typingIndicator">
+            <span class="typing-dot"></span>
+            <span class="typing-dot"></span>
+            <span class="typing-dot"></span>
+        </div>
+        
+        <div class="chat-input-wrapper">
+            <input 
+                type="text" 
+                class="chat-input" 
+                id="chatInput" 
+                placeholder="Share your thoughts..."
+                autocomplete="off"
+            />
+            <button class="chat-send-btn" id="sendBtn">Send</button>
+        </div>
+    </div>
 </div>
 
 <div class="stats-grid">
@@ -189,7 +462,7 @@
 <div class="chart-card">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
         <div class="chart-title">Mood Trend</div>
-        <a href="{% url 'journal:download_report_pdf' %}" class="btn-secondary" id="downloadReportBtn" style="text-decoration: none;">Download Report</a>
+        <a href="{% url 'journal:download_report_pdf' %}" class="btn-secondary" style="text-decoration: none;">Download Report</a>
     </div>
     <div class="chart-container">
         <canvas id="moodChart"></canvas>
@@ -212,7 +485,7 @@
     </div>
     {% empty %}
     <div class="empty-state">
-        <div class="empty-state-icon">✍️</div>
+        <div style="font-size: 48px; margin-bottom: 16px;">✍️</div>
         <p style="font-size: 17px; margin-bottom: 20px;">No entries yet</p>
         <a href="{% url 'journal:new_entry' %}" class="btn-primary">Create Your First Entry</a>
     </div>
@@ -223,91 +496,211 @@
 {% block extra_js %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script>
-fetch('{% url "journal:mood_data_api" %}')
-    .then(res => res.json())
-    .then(data => {
-        const ctx = document.getElementById('moodChart').getContext('2d');
-        const gradient = ctx.createLinearGradient(0, 0, 0, 300);
-        gradient.addColorStop(0, 'rgba(0, 113, 227, 0.3)');
-        gradient.addColorStop(1, 'rgba(0, 113, 227, 0.0)');
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: data.labels,
-                datasets: [{
-                    label: 'Sentiment',
-                    data: data.sentiment,
-                    borderColor: '#0071e3',
-                    backgroundColor: gradient,
-                    tension: 0.4,
-                    fill: true,
-                    borderWidth: 3,
-                    pointRadius: 6,
-                    pointHoverRadius: 8,
-                    pointBackgroundColor: '#fff',
-                    pointBorderColor: '#0071e3',
-                    pointBorderWidth: 2
-                }]
+// Optimized Chatbot with direct API calls
+const chatContainer = document.getElementById('chatContainer');
+const chatInput = document.getElementById('chatInput');
+const sendBtn = document.getElementById('sendBtn');
+const typingIndicator = document.getElementById('typingIndicator');
+
+let isProcessing = false;
+
+function addMessage(content, isUser = false) {
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
+    
+    const avatar = document.createElement('div');
+    avatar.className = 'message-avatar';
+    avatar.textContent = isUser ? '👤' : '🤖';
+    
+    const contentDiv = document.createElement('div');
+    contentDiv.className = 'message-content';
+    contentDiv.textContent = content;
+    
+    messageDiv.appendChild(avatar);
+    messageDiv.appendChild(contentDiv);
+    chatContainer.appendChild(messageDiv);
+    
+    // Smooth scroll
+    chatContainer.scrollTo({
+        top: chatContainer.scrollHeight,
+        behavior: 'smooth'
+    });
+}
+
+async function sendMessage() {
+    if (isProcessing) return;
+    
+    const message = chatInput.value.trim();
+    if (!message) return;
+    
+    // Add user message
+    addMessage(message, true);
+    chatInput.value = '';
+    
+    // Disable input
+    isProcessing = true;
+    sendBtn.disabled = true;
+    chatInput.disabled = true;
+    
+    // Show typing indicator
+    typingIndicator.classList.add('active');
+    
+    try {
+        const response = await fetch('{% url "journal:chatbot_api" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
             },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { display: false },
-                    tooltip: {
-                        backgroundColor: 'rgba(255, 255, 255, 0.9)',
-                        titleColor: '#1d1d1f',
-                        bodyColor: '#1d1d1f',
-                        borderColor: '#d2d2d7',
-                        borderWidth: 1,
-                        padding: 12,
-                        cornerRadius: 12,
-                        displayColors: false,
-                        callbacks: {
-                            label: function(context) {
-                                let label = context.dataset.label || '';
-                                if (label) {
-                                    label += ': ';
-                                }
-                                if (context.parsed.y !== null) {
-                                    label += context.parsed.y.toFixed(2);
-                                }
-                                return [label, `Mood: ${data.emotions[context.dataIndex]}`];
-                            }
-                        }
-                    }
+            body: JSON.stringify({ message })
+        });
+        
+        const data = await response.json();
+        
+        // Hide typing indicator
+        typingIndicator.classList.remove('active');
+        
+        // Add AI response
+        if (data.response) {
+            addMessage(data.response, false);
+        } else if (data.error) {
+            addMessage(data.error, false);
+        } else {
+            addMessage("I'm having trouble responding right now. Could you try again? 💙", false);
+        }
+        
+    } catch (error) {
+        typingIndicator.classList.remove('active');
+        addMessage("I'm experiencing connectivity issues. Please check your connection and try again. ✨", false);
+    } finally {
+        // Re-enable input
+        isProcessing = false;
+        sendBtn.disabled = false;
+        chatInput.disabled = false;
+        chatInput.focus();
+    }
+}
+
+// Event listeners
+sendBtn.addEventListener('click', sendMessage);
+chatInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+    }
+});
+
+// Optimized Mood Chart with lazy loading
+let chartLoaded = false;
+
+function loadChart() {
+    if (chartLoaded) return;
+    chartLoaded = true;
+    
+    fetch('{% url "journal:mood_data_api" %}')
+        .then(res => res.json())
+        .then(data => {
+            const ctx = document.getElementById('moodChart').getContext('2d');
+            const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+            gradient.addColorStop(0, 'rgba(102, 126, 234, 0.3)');
+            gradient.addColorStop(1, 'rgba(102, 126, 234, 0.0)');
+            
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        label: 'Sentiment',
+                        data: data.sentiment,
+                        borderColor: '#667eea',
+                        backgroundColor: gradient,
+                        tension: 0.4,
+                        fill: true,
+                        borderWidth: 3,
+                        pointRadius: 6,
+                        pointHoverRadius: 8,
+                        pointBackgroundColor: '#fff',
+                        pointBorderColor: '#667eea',
+                        pointBorderWidth: 2
+                    }]
                 },
-                scales: {
-                    y: { 
-                        beginAtZero: true, 
-                        min: -1.1, 
-                        max: 1.1,
-                        grid: { 
-                            color: 'rgba(0, 0, 0, 0.05)',
-                            drawBorder: false
-                        },
-                        ticks: {
-                            font: { size: 11 },
-                            callback: function(value) {
-                                if (value === 1) return 'High';
-                                if (value === 0) return 'Neutral';
-                                if (value === -1) return 'Low';
-                                return '';
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                            titleColor: '#1d1d1f',
+                            bodyColor: '#1d1d1f',
+                            borderColor: '#e5e5e7',
+                            borderWidth: 1,
+                            padding: 12,
+                            cornerRadius: 12,
+                            displayColors: false,
+                            callbacks: {
+                                label: function(context) {
+                                    return [
+                                        `Sentiment: ${context.parsed.y.toFixed(2)}`,
+                                        `Mood: ${data.emotions[context.dataIndex]}`
+                                    ];
+                                }
                             }
                         }
                     },
-                    x: {
-                        grid: { display: false },
-                        ticks: {
-                            font: { size: 10 },
-                            maxRotation: 0,
-                            autoSkip: true,
-                            maxTicksLimit: 7
+                    scales: {
+                        y: { 
+                            beginAtZero: true, 
+                            min: -1.1, 
+                            max: 1.1,
+                            grid: { 
+                                color: 'rgba(0, 0, 0, 0.05)',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                font: { size: 11 },
+                                callback: function(value) {
+                                    if (value === 1) return 'High';
+                                    if (value === 0) return 'Neutral';
+                                    if (value === -1) return 'Low';
+                                    return '';
+                                }
+                            }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: {
+                                font: { size: 10 },
+                                maxRotation: 0,
+                                autoSkip: true,
+                                maxTicksLimit: 7
+                            }
                         }
                     }
                 }
-            }
-        });
+            });
+        })
+        .catch(err => console.error('Chart loading error:', err));
+}
+
+// Intersection Observer for lazy loading chart
+const chartObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            loadChart();
+            chartObserver.disconnect();
+        }
     });
+}, { threshold: 0.1 });
+
+const chartElement = document.getElementById('moodChart');
+if (chartElement) {
+    chartObserver.observe(chartElement);
+}
+
+// Focus on input when page loads
+window.addEventListener('load', () => {
+    chatInput.focus();
+});
 </script>
 {% endblock %}

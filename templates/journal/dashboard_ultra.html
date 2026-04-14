@@ -1,0 +1,322 @@
+{% extends 'base_apple.html' %}
+{% block title %}Dashboard - Mindful{% endblock %}
+{% block extra_css %}
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0a0a;--card:#111;--text:#fff;--text-sec:#888;--purple:#8b5cf6;--blue:#3b82f6;--glow-p:rgba(139,92,246,.5);--glow-b:rgba(59,130,246,.5)}
+[data-theme="light"]{--bg:#fff;--card:#f8f9fa;--text:#0a0a0a;--text-sec:#666}
+body{background:var(--bg);color:var(--text);font-family:Inter,sans-serif;overflow-x:hidden}
+.container{max-width:1400px;margin:0 auto;padding:40px 24px 120px}
+.theme-toggle{position:fixed;top:90px;right:32px;z-index:1000;width:56px;height:56px;background:var(--card);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .3s;box-shadow:0 8px 32px rgba(0,0,0,.4)}
+.theme-toggle:hover{transform:scale(1.1)}
+.hero{position:relative;padding:80px 0 60px;text-align:center;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-50%;left:20%;width:600px;height:600px;background:radial-gradient(circle,var(--glow-p) 0%,transparent 70%);filter:blur(80px);animation:float 8s ease-in-out infinite}
+.hero::after{content:'';position:absolute;top:-30%;right:20%;width:500px;height:500px;background:radial-gradient(circle,var(--glow-b) 0%,transparent 70%);filter:blur(80px);animation:float 10s ease-in-out infinite reverse}
+@keyframes float{0%,100%{transform:translate(0,0)}50%{transform:translate(30px,-30px)}}
+.hero-content{position:relative;z-index:1}
+.hero h1{font-size:72px;font-weight:900;line-height:1.1;margin-bottom:24px;background:linear-gradient(135deg,#fff 0%,#888 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+[data-theme="light"] .hero h1{background:linear-gradient(135deg,#0a0a0a 0%,#666 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.gradient-text{background:linear-gradient(135deg,var(--purple) 0%,var(--blue) 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.hero p{font-size:20px;color:var(--text-sec);max-width:600px;margin:0 auto 40px}
+.hero-cta{display:inline-flex;align-items:center;gap:12px;padding:16px 32px;background:linear-gradient(135deg,var(--purple) 0%,var(--blue) 100%);color:#fff;border-radius:12px;font-size:16px;font-weight:600;text-decoration:none;transition:all .3s;box-shadow:0 8px 32px var(--glow-p)}
+.hero-cta:hover{transform:translateY(-2px);box-shadow:0 12px 48px var(--glow-p)}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px;margin-bottom:60px;position:relative;z-index:1}
+.stat-card{background:var(--card);padding:40px;border-radius:24px;position:relative;overflow:hidden;transition:all .3s}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--purple) 0%,var(--blue) 100%)}
+.stat-card:hover{transform:translateY(-8px)}
+.stat-card:hover::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at center,var(--glow-p) 0%,transparent 70%);filter:blur(40px);z-index:-1}
+.stat-icon{width:48px;height:48px;margin-bottom:20px}
+.stat-label{font-size:14px;color:var(--text-sec);text-transform:uppercase;letter-spacing:2px;margin-bottom:12px;font-weight:600}
+.stat-value{font-size:56px;font-weight:900;background:linear-gradient(135deg,var(--purple) 0%,var(--blue) 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;line-height:1}
+.ai-section,.chart-section,.entries-section{background:var(--card);border-radius:32px;padding:60px;margin-bottom:60px;position:relative;overflow:hidden}
+.ai-section::before{content:'';position:absolute;top:-100px;right:-100px;width:400px;height:400px;background:radial-gradient(circle,var(--glow-p) 0%,transparent 70%);filter:blur(60px)}
+.chart-section::before{content:'';position:absolute;bottom:-100px;left:-100px;width:400px;height:400px;background:radial-gradient(circle,var(--glow-b) 0%,transparent 70%);filter:blur(60px)}
+.ai-badge{padding:8px 20px;background:linear-gradient(135deg,var(--purple) 0%,var(--blue) 100%);color:#fff;border-radius:20px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;box-shadow:0 4px 16px var(--glow-p);display:inline-flex;align-items:center;gap:8px}
+.section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:40px;position:relative;z-index:1}
+.section-header h2{font-size:32px;font-weight:800}
+.btn{padding:12px 24px;background:var(--card);color:var(--text);border-radius:12px;font-size:14px;font-weight:600;text-decoration:none;transition:all .3s;display:inline-flex;align-items:center;gap:8px}
+.btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.3)}
+.btn-primary{background:linear-gradient(135deg,var(--purple) 0%,var(--blue) 100%);color:#fff;box-shadow:0 4px 16px var(--glow-p)}
+.btn-primary:hover{box-shadow:0 8px 32px var(--glow-p)}
+.chart-container{position:relative;height:400px;z-index:1}
+.entry-item{padding:32px 0;border-bottom:1px solid rgba(255,255,255,.05);transition:all .3s}
+[data-theme="light"] .entry-item{border-bottom:1px solid rgba(0,0,0,.05)}
+.entry-item:hover{padding-left:20px}
+.entry-date{font-size:13px;color:var(--text-sec);margin-bottom:12px;font-weight:500;display:flex;align-items:center;gap:8px}
+.emotion-badge{display:inline-block;padding:8px 20px;background:rgba(139,92,246,.1);color:var(--purple);border-radius:20px;font-size:13px;font-weight:600}
+.ai-chat-fab{position:fixed;bottom:40px;right:40px;width:72px;height:72px;background:linear-gradient(135deg,var(--purple) 0%,var(--blue) 100%);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:1000;transition:all .3s;box-shadow:0 8px 32px var(--glow-p);animation:pulse-glow 3s ease-in-out infinite}
+@keyframes pulse-glow{0%,100%{box-shadow:0 8px 32px var(--glow-p)}50%{box-shadow:0 8px 48px var(--glow-p),0 0 0 12px rgba(139,92,246,.1)}}
+.ai-chat-fab:hover{transform:scale(1.1)}
+.ai-chat-modal{position:fixed;bottom:40px;right:40px;width:440px;height:640px;background:var(--card);border-radius:24px;box-shadow:0 20px 80px rgba(0,0,0,.6);z-index:999;display:none;flex-direction:column;overflow:hidden}
+.ai-chat-modal.active{display:flex;animation:slideUp .4s cubic-bezier(.16,1,.3,1)}
+@keyframes slideUp{from{opacity:0;transform:translateY(30px) scale(.95)}to{opacity:1;transform:translateY(0) scale(1)}}
+.ai-chat-header{background:linear-gradient(135deg,var(--purple) 0%,var(--blue) 100%);padding:24px;display:flex;align-items:center;justify-content:space-between;color:#fff}
+.ai-chat-title h3{font-size:18px;font-weight:700;margin-bottom:4px}
+.ai-status{display:flex;align-items:center;gap:8px;font-size:12px;opacity:.9}
+.status-dot{width:8px;height:8px;background:#34c759;border-radius:50%;animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.ai-chat-close{background:rgba(255,255,255,.2);border:none;color:#fff;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:24px;transition:all .3s;display:flex;align-items:center;justify-content:center}
+.ai-chat-close:hover{background:rgba(255,255,255,.3);transform:rotate(90deg)}
+.ai-chat-messages{flex:1;overflow-y:auto;padding:24px;background:var(--bg)}
+.ai-chat-messages::-webkit-scrollbar{width:6px}
+.ai-chat-messages::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:10px}
+.chat-message{margin-bottom:20px;display:flex;gap:12px;animation:messageSlide .3s ease-out}
+@keyframes messageSlide{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.chat-message.user{flex-direction:row-reverse}
+.chat-avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:linear-gradient(135deg,var(--purple) 0%,var(--blue) 100%)}
+.chat-bubble{max-width:70%;padding:14px 18px;border-radius:16px;font-size:14px;line-height:1.6}
+.chat-message.bot .chat-bubble{background:var(--card);color:var(--text)}
+.chat-message.user .chat-bubble{background:linear-gradient(135deg,var(--purple) 0%,var(--blue) 100%);color:#fff}
+.typing-indicator{display:none;padding:14px 18px;background:var(--card);border-radius:16px;width:fit-content}
+.typing-indicator.active{display:flex;gap:6px}
+.typing-dot{width:8px;height:8px;border-radius:50%;background:linear-gradient(135deg,var(--purple) 0%,var(--blue) 100%);animation:typing 1.4s infinite}
+.typing-dot:nth-child(2){animation-delay:.2s}
+.typing-dot:nth-child(3){animation-delay:.4s}
+@keyframes typing{0%,60%,100%{transform:translateY(0);opacity:.7}30%{transform:translateY(-10px);opacity:1}}
+.ai-chat-input{padding:24px;background:var(--card);display:flex;gap:12px}
+.ai-chat-input input{flex:1;padding:14px 20px;background:var(--bg);border:1px solid rgba(255,255,255,.1);border-radius:12px;color:var(--text);font-size:14px;outline:none;transition:all .3s}
+.ai-chat-input input:focus{border-color:var(--purple);box-shadow:0 0 0 3px rgba(139,92,246,.1)}
+.ai-chat-send{background:linear-gradient(135deg,var(--purple) 0%,var(--blue) 100%);border:none;color:#fff;width:48px;height:48px;border-radius:12px;cursor:pointer;transition:all .3s;display:flex;align-items:center;justify-content:center}
+.ai-chat-send:hover:not(:disabled){transform:scale(1.05)}
+.ai-chat-send:disabled{opacity:.5;cursor:not-allowed}
+@media(max-width:768px){.hero h1{font-size:48px}.ai-chat-modal{bottom:0;right:0;left:0;width:100%;height:100%;border-radius:0}.ai-chat-fab{bottom:100px}.stats-grid{grid-template-columns:1fr}.ai-section,.chart-section,.entries-section{padding:40px 24px}}
+</style>
+{% endblock %}
+{% block content %}
+<div class="theme-toggle" id="themeToggle">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="themeIcon">
+<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+</svg>
+</div>
+
+<div class="hero">
+<div class="hero-content">
+<h1>Your <span class="gradient-text">AI-Powered</span><br>Mental Wellness</h1>
+<p>Advanced AI technology meets compassionate care. Track, analyze, and improve your mental health journey.</p>
+<a href="{% url 'journal:new_entry' %}" class="hero-cta">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+<path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+</svg>
+<span>Start New Entry</span>
+</a>
+</div>
+</div>
+
+<div class="stats-grid">
+<div class="stat-card">
+<svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke-width="2" style="stroke:url(#grad1)">
+<defs><linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+<stop offset="0%" style="stop-color:#8b5cf6"/><stop offset="100%" style="stop-color:#3b82f6"/>
+</linearGradient></defs>
+<line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line>
+<line x1="6" y1="20" x2="6" y2="14"></line>
+</svg>
+<div class="stat-label">Total Entries</div>
+<div class="stat-value">{{ total_entries }}</div>
+</div>
+<div class="stat-card">
+<svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke-width="2" style="stroke:url(#grad2)">
+<defs><linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
+<stop offset="0%" style="stop-color:#8b5cf6"/><stop offset="100%" style="stop-color:#3b82f6"/>
+</linearGradient></defs>
+<rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+<line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line>
+<line x1="3" y1="10" x2="21" y2="10"></line>
+</svg>
+<div class="stat-label">This Week</div>
+<div class="stat-value">{{ week_entries }}</div>
+</div>
+<div class="stat-card">
+<svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke-width="2" style="stroke:url(#grad3)">
+<defs><linearGradient id="grad3" x1="0%" y1="0%" x2="100%" y2="100%">
+<stop offset="0%" style="stop-color:#8b5cf6"/><stop offset="100%" style="stop-color:#3b82f6"/>
+</linearGradient></defs>
+<path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path>
+</svg>
+<div class="stat-label">Current Streak</div>
+<div class="stat-value">{{ week_entries }}</div>
+</div>
+</div>
+
+<div class="ai-section">
+<div class="ai-badge">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+</svg>
+AI Powered
+</div>
+<h2 style="margin:20px 0;display:flex;align-items:center;gap:12px">
+<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="url(#grad4)" stroke-width="2">
+<defs><linearGradient id="grad4" x1="0%" y1="0%" x2="100%" y2="100%">
+<stop offset="0%" style="stop-color:#8b5cf6"/><stop offset="100%" style="stop-color:#3b82f6"/>
+</linearGradient></defs>
+<path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+<polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+<line x1="12" y1="22.08" x2="12" y2="12"></line>
+</svg>
+Intelligent Insights
+</h2>
+<p style="color:var(--text-sec);font-size:18px;line-height:1.8;max-width:800px;display:flex;align-items:start;gap:12px">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2" style="flex-shrink:0;margin-top:4px">
+<circle cx="12" cy="12" r="10"></circle>
+<path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+<line x1="12" y1="17" x2="12.01" y2="17"></line>
+</svg>
+<span>Our advanced AI analyzes your mood patterns, identifies trends, and provides personalized recommendations to support your mental wellness journey. Get real-time insights and compassionate support whenever you need it.</span>
+</p>
+</div>
+
+<div class="chart-section">
+<div class="section-header">
+<h2 style="display:flex;align-items:center;gap:12px">
+<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="url(#grad5)" stroke-width="2">
+<defs><linearGradient id="grad5" x1="0%" y1="0%" x2="100%" y2="100%">
+<stop offset="0%" style="stop-color:#8b5cf6"/><stop offset="100%" style="stop-color:#3b82f6"/>
+</linearGradient></defs>
+<line x1="12" y1="20" x2="12" y2="10"></line>
+<line x1="18" y1="20" x2="18" y2="4"></line>
+<line x1="6" y1="20" x2="6" y2="16"></line>
+</svg>
+Mood Analytics
+</h2>
+<a href="{% url 'journal:download_report_pdf' %}" class="btn">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+<polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line>
+</svg>
+Download Report
+</a>
+</div>
+<div class="chart-container"><canvas id="moodChart"></canvas></div>
+</div>
+
+<div class="entries-section">
+<div class="section-header">
+<h2 style="display:flex;align-items:center;gap:12px">
+<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="url(#grad6)" stroke-width="2">
+<defs><linearGradient id="grad6" x1="0%" y1="0%" x2="100%" y2="100%">
+<stop offset="0%" style="stop-color:#8b5cf6"/><stop offset="100%" style="stop-color:#3b82f6"/>
+</linearGradient></defs>
+<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+<polyline points="14 2 14 8 20 8"></polyline>
+<line x1="16" y1="13" x2="8" y2="13"></line>
+<line x1="16" y1="17" x2="8" y2="17"></line>
+<polyline points="10 9 9 9 8 9"></polyline>
+</svg>
+Recent Entries
+</h2>
+<a href="{% url 'journal:new_entry' %}" class="btn btn-primary">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+<line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line>
+</svg>
+New Entry
+</a>
+</div>
+{% for log in recent_logs %}
+<div class="entry-item">
+<div class="entry-date">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+<circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline>
+</svg>
+{{ log.timestamp|date:"F d, Y - g:i A" }}
+</div>
+<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+<span class="emotion-badge">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block;vertical-align:middle;margin-right:6px">
+<circle cx="12" cy="12" r="10"></circle>
+<path d="M8 14s1.5 2 4 2 4-2 4-2"></path>
+<line x1="9" y1="9" x2="9.01" y2="9"></line>
+<line x1="15" y1="9" x2="15.01" y2="9"></line>
+</svg>
+{{ log.dominant_emotion|title }}
+</span>
+<span style="font-size:12px;color:var(--text-sec);display:flex;align-items:center;gap:6px">
+<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+</svg>
+Sentiment: {{ log.sentiment_score|floatformat:2 }}
+</span>
+</div>
+{% if log.alert_text %}
+<div style="margin-top:16px;padding:12px 16px;background:rgba(255,59,48,.1);color:#ff3b30;border-radius:12px;font-size:14px;display:flex;align-items:center;gap:12px">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+<circle cx="12" cy="12" r="10"></circle>
+<line x1="12" y1="8" x2="12" y2="12"></line>
+<line x1="12" y1="16" x2="12.01" y2="16"></line>
+</svg>
+{{ log.alert_text }}
+</div>
+{% endif %}
+</div>
+{% empty %}
+<div style="text-align:center;padding:80px 20px">
+<svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--text-sec)" stroke-width="1" style="opacity:.3;margin-bottom:24px">
+<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+<path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+</svg>
+<p style="font-size:18px;color:var(--text-sec);margin-bottom:32px">No entries yet. Start your wellness journey today.</p>
+<a href="{% url 'journal:new_entry' %}" class="hero-cta">Create First Entry</a>
+</div>
+{% endfor %}
+</div>
+
+<div class="ai-chat-fab" id="aiChatFab">
+<svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+</svg>
+</div>
+
+<div class="ai-chat-modal" id="aiChatModal">
+<div class="ai-chat-header">
+<div class="ai-chat-title">
+<h3>AI Wellness Companion</h3>
+<div class="ai-status"><span class="status-dot"></span><span>Online & Ready</span></div>
+</div>
+<button class="ai-chat-close" id="aiChatClose">×</button>
+</div>
+<div class="ai-chat-messages" id="aiChatMessages">
+<div class="chat-message bot">
+<div class="chat-avatar">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+<rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+<path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+</svg>
+</div>
+<div class="chat-bubble">Hi! I'm your AI wellness companion. How are you feeling today? I'm here to listen and support you.</div>
+</div>
+</div>
+<div class="typing-indicator" id="typingIndicator">
+<span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>
+</div>
+<div class="ai-chat-input">
+<input type="text" id="aiChatInput" placeholder="Share your thoughts..." autocomplete="off"/>
+<button class="ai-chat-send" id="aiChatSend">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+<line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+</svg>
+</button>
+</div>
+</div>
+{% endblock %}
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+const t=document.getElementById('themeToggle'),i=document.getElementById('themeIcon'),h=document.documentElement,s=localStorage.getItem('theme')||'dark';
+h.setAttribute('data-theme',s);
+i.innerHTML=s==='dark'?'<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>':'<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>';
+t.addEventListener('click',()=>{const c=h.getAttribute('data-theme'),n=c==='dark'?'light':'dark';h.setAttribute('data-theme',n);localStorage.setItem('theme',n);i.innerHTML=n==='dark'?'<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>':'<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>';window.moodChart&&(window.moodChart.destroy(),loadChart())});
+const f=document.getElementById('aiChatFab'),m=document.getElementById('aiChatModal'),c=document.getElementById('aiChatClose'),inp=document.getElementById('aiChatInput'),snd=document.getElementById('aiChatSend'),msg=document.getElementById('aiChatMessages'),typ=document.getElementById('typingIndicator');
+let p=false;
+f.addEventListener('click',()=>{m.classList.add('active');f.style.display='none';inp.focus()});
+c.addEventListener('click',()=>{m.classList.remove('active');f.style.display='flex'});
+function addMessage(content,isUser=false,aiType=''){const d=document.createElement('div');d.className=`chat-message ${isUser?'user':'bot'}`;const a=document.createElement('div');a.className='chat-avatar';a.innerHTML=isUser?'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>':'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>';const b=document.createElement('div');b.className='chat-bubble';b.textContent=content;if(!isUser&&aiType){const badge=document.createElement('div');badge.style.cssText='font-size:10px;opacity:0.6;margin-top:4px;display:flex;align-items:center;gap:4px';badge.innerHTML=`<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle></svg>${aiType}`;b.appendChild(badge)}d.appendChild(a);d.appendChild(b);msg.appendChild(d);msg.scrollTo({top:msg.scrollHeight,behavior:'smooth'})}
+async function sendMessage(){if(p)return;const message=inp.value.trim();if(!message)return;addMessage(message,true);inp.value='';p=true;snd.disabled=true;inp.disabled=true;typ.classList.add('active');try{const r=await fetch('{% url "journal:chatbot_api" %}',{method:'POST',headers:{'Content-Type':'application/json','X-CSRFToken':'{{ csrf_token }}'},body:JSON.stringify({message})});const d=await r.json();typ.classList.remove('active');if(d.response){const aiType=d.ai_type||'Mindful AI';addMessage(d.response,false,aiType)}else{addMessage(getFallbackResponse(message),false,'Mindful AI')}}catch(e){typ.classList.remove('active');addMessage(getFallbackResponse(message),false,'Mindful AI')}finally{p=false;snd.disabled=false;inp.disabled=false;inp.focus()}}
+function getFallbackResponse(msg){const m=msg.toLowerCase();const responses={anxious:["I hear you. Anxiety can feel overwhelming. Try the 4-7-8 breathing: in for 4, hold for 7, out for 8. You've got this. 💙","Feeling anxious is tough. Ground yourself with 5-4-3-2-1: name 5 things you see, 4 you touch, 3 you hear, 2 you smell, 1 you taste. I'm here.","Anxiety is temporary. Try progressive muscle relaxation - tense and release each muscle group. You're stronger than this feeling. 🌟"],sad:["I'm sorry you're feeling down. It's okay to not be okay. What's one small thing that brought you joy today? 🌟","Sadness is valid. Be gentle with yourself. Sometimes just getting through the day is enough, and that's perfectly okay. 💙","Your feelings matter. When ready, write down 3 things you're grateful for - even tiny things. It can shift perspective. 🌙"],stressed:["Stress is real. What's the ONE thing you can control right now? Start there. You don't have to do everything at once. 💪","I get it - stress can be paralyzing. Write down 3 stressors, then pick just ONE to focus on. Baby steps count. 🌟","Stress comes from trying to control everything. What's one thing you can let go of today? Give yourself permission. 💙"],happy:["That's wonderful! What made today special? Soak in this feeling - you deserve it! ✨","Your happiness is contagious! Remember this moment when things get tough - you can get back here. 🌟","This is beautiful! Celebrate this win. Joy is precious - hold onto it. What are you most grateful for right now? 💙"],tired:["Rest isn't weakness - it's essential. Take 10 minutes for yourself. Even a short break helps recharge. 🌙","Exhaustion is your body asking for care. Listen to it. What's one thing you can let go of today? 💙","Being tired is valid. You don't have to earn rest - you deserve it. Can you give yourself permission to pause? 🌟"],lonely:["Loneliness is painful. You're not alone in feeling alone. Can you reach out to one person today? 💙","Feeling lonely doesn't mean you're unlovable - it means you're human and need connection. Who could you connect with? 🌟"],default:["I'm here to listen. Tell me more about what's on your mind. Sometimes just expressing it helps. 💙","Thank you for sharing. Your feelings are valid. What would help you feel even 1% better right now? 🌟","I appreciate you opening up. You're stronger than you think, and you don't have to face this alone. 💙","That sounds challenging. What's one small step you could take today to care for yourself? You deserve kindness. 🌙"]};for(let k in responses){if(m.includes(k))return responses[k][Math.floor(Math.random()*responses[k].length)]}return responses.default[Math.floor(Math.random()*responses.default.length)]}
+snd.addEventListener('click',sendMessage);
+inp.addEventListener('keypress',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage()}});
+function loadChart(){fetch('{% url "journal:mood_data_api" %}').then(r=>r.json()).then(data=>{const ctx=document.getElementById('moodChart').getContext('2d'),isDark=h.getAttribute('data-theme')==='dark',g=ctx.createLinearGradient(0,0,0,400);g.addColorStop(0,'rgba(139,92,246,.4)');g.addColorStop(1,'rgba(59,130,246,0)');window.moodChart=new Chart(ctx,{type:'line',data:{labels:data.labels,datasets:[{label:'Sentiment',data:data.sentiment,borderColor:'#8b5cf6',backgroundColor:g,tension:.4,fill:true,borderWidth:3,pointRadius:6,pointHoverRadius:10,pointBackgroundColor:'#8b5cf6',pointBorderColor:'#fff',pointBorderWidth:2,pointHitRadius:10}]},options:{responsive:true,maintainAspectRatio:false,animation:{duration:2000,easing:'easeInOutQuart',delay:function(context){return context.dataIndex*100}},plugins:{legend:{display:false},tooltip:{backgroundColor:isDark?'#111':'#fff',titleColor:isDark?'#fff':'#0a0a0a',bodyColor:isDark?'#fff':'#0a0a0a',borderColor:isDark?'#333':'#e5e5e5',borderWidth:1,padding:16,cornerRadius:12,displayColors:false,callbacks:{label:function(context){return[`Sentiment: ${context.parsed.y.toFixed(2)}`,`Mood: ${data.emotions[context.dataIndex]}`]}}}},scales:{y:{beginAtZero:true,min:-1.1,max:1.1,grid:{color:isDark?'rgba(255,255,255,.05)':'rgba(0,0,0,.05)',drawBorder:false},ticks:{color:isDark?'#888':'#666',font:{size:12},callback:function(value){if(value===1)return'High';if(value===0)return'Neutral';if(value===-1)return'Low';return''}}},x:{grid:{display:false},ticks:{color:isDark?'#888':'#666',font:{size:11},maxRotation:0,autoSkip:true,maxTicksLimit:7}}}}})}).catch(err=>console.error('Chart error:',err))}
+window.addEventListener('load',loadChart);
+</script>
+{% endblock %}

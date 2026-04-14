@@ -8,123 +8,265 @@
         width: 100%;
         margin: 0 auto;
     }
+
+    .notif-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+        gap: 20px;
+    }
+
+    @media (max-width: 768px) {
+        .notif-grid {
+            grid-template-columns: 1fr;
+        }
+    }
     
     .notif-card {
         background: white;
         border-radius: 18px;
         padding: 24px;
-        margin-bottom: 16px;
         box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
         display: flex;
-        gap: 20px;
+        gap: 16px;
         align-items: flex-start;
-        transition: transform 0.2s;
+        transition: all 0.3s;
         border-left: 4px solid transparent;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .notif-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, #8b5cf6 0%, #3b82f6 100%);
+        opacity: 0;
+        transition: opacity 0.3s;
     }
     
     .notif-card.unread {
-        background: #fdfdfd;
-        border-left-color: #0071e3;
+        background: linear-gradient(135deg, rgba(139, 92, 246, 0.03) 0%, rgba(59, 130, 246, 0.03) 100%);
+        border-left-color: #8b5cf6;
+    }
+
+    .notif-card.unread::before {
+        opacity: 1;
     }
     
     .notif-card:hover {
-        transform: translateY(-2px);
+        transform: translateY(-4px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
     }
     
     .notif-icon {
-        font-size: 24px;
-        padding: 12px;
-        background: #f5f5f7;
+        width: 48px;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%);
         border-radius: 12px;
+        flex-shrink: 0;
     }
     
     .notif-content {
         flex: 1;
+        min-width: 0;
     }
     
     .notif-header {
         display: flex;
         justify-content: space-between;
+        align-items: start;
         margin-bottom: 8px;
+        gap: 12px;
     }
     
     .notif-title {
         font-weight: 600;
-        font-size: 17px;
+        font-size: 16px;
         color: #1d1d1f;
+        display: flex;
+        align-items: center;
+        gap: 8px;
     }
     
     .notif-time {
-        font-size: 13px;
+        font-size: 12px;
         color: #86868b;
+        white-space: nowrap;
+        display: flex;
+        align-items: center;
+        gap: 4px;
     }
     
     .notif-message {
-        font-size: 15px;
+        font-size: 14px;
         color: #424245;
-        line-height: 1.5;
+        line-height: 1.6;
+        margin-bottom: 12px;
     }
     
     .notif-actions {
-        margin-top: 16px;
         display: flex;
-        gap: 12px;
+        gap: 8px;
+        flex-wrap: wrap;
     }
     
     .btn-small {
         font-size: 13px;
-        padding: 6px 12px;
+        padding: 8px 16px;
         border-radius: 980px;
         text-decoration: none;
-        font-weight: 500;
-        display: inline-block;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: all 0.2s;
+        border: none;
+        cursor: pointer;
     }
     
     .btn-small-primary {
-        background: #0071e3;
+        background: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%);
         color: white;
+    }
+
+    .btn-small-primary:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
     }
     
     .btn-small-secondary {
         background: #f5f5f7;
         color: #1d1d1f;
     }
+
+    .btn-small-secondary:hover {
+        background: #e8e8ed;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 80px 20px;
+        background: white;
+        border-radius: 24px;
+        box-shadow: 0 2px 16px rgba(0, 0, 0, 0.06);
+    }
+
+    .header-actions {
+        display: flex;
+        gap: 12px;
+    }
+
+    @media (max-width: 600px) {
+        .header-actions {
+            flex-direction: column;
+        }
+    }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="notif-container">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
-        <h1>Notifications</h1>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; flex-wrap: wrap; gap: 16px;">
+        <h1 style="display:flex;align-items:center;gap:12px">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="url(#gradNotif)" stroke-width="2">
+                <defs><linearGradient id="gradNotif" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#8b5cf6"/><stop offset="100%" style="stop-color:#3b82f6"/>
+                </linearGradient></defs>
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+            </svg>
+            Notifications
+        </h1>
+        <div class="header-actions">
+            <button class="btn-secondary" style="display:flex;align-items:center;gap:8px">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+                Mark All Read
+            </button>
+        </div>
     </div>
 
-    {% for notification in notifications %}
-    <div class="notif-card {% if not notification.is_read %}unread{% endif %}" id="notif-{{ notification.id }}">
-        <div class="notif-icon">
-            {% if notification.notification_type == 'mood_alert' %}⚠️{% else %}🔔{% endif %}
-        </div>
-        <div class="notif-content">
-            <div class="notif-header">
-                <span class="notif-title">{{ notification.title }}</span>
-                <span class="notif-time">{{ notification.created_at|timesince }} ago</span>
-            </div>
-            <p class="notif-message">{{ notification.message }}</p>
-            <div class="notif-actions">
-                {% if notification.link %}
-                <a href="{{ notification.link }}" class="btn-small btn-small-primary" onclick="markAsRead({{ notification.id }})">View Details</a>
+    {% if notifications %}
+    <div class="notif-grid">
+        {% for notification in notifications %}
+        <div class="notif-card {% if not notification.is_read %}unread{% endif %}" id="notif-{{ notification.id }}">
+            <div class="notif-icon">
+                {% if notification.notification_type == 'mood_alert' %}
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                {% else %}
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M12 16v-4"></path>
+                    <path d="M12 8h.01"></path>
+                </svg>
                 {% endif %}
-                {% if not notification.is_read %}
-                <button class="btn-small btn-small-secondary" onclick="markAsRead({{ notification.id }})">Mark as Read</button>
-                {% endif %}
+            </div>
+            <div class="notif-content">
+                <div class="notif-header">
+                    <span class="notif-title">
+                        {% if not notification.is_read %}
+                        <svg width="8" height="8" viewBox="0 0 24 24" fill="#8b5cf6">
+                            <circle cx="12" cy="12" r="10"></circle>
+                        </svg>
+                        {% endif %}
+                        {{ notification.title }}
+                    </span>
+                    <span class="notif-time">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        {{ notification.created_at|timesince }} ago
+                    </span>
+                </div>
+                <p class="notif-message">{{ notification.message }}</p>
+                <div class="notif-actions">
+                    {% if notification.link %}
+                    <a href="{{ notification.link }}" class="btn-small btn-small-primary" onclick="markAsRead({{ notification.id }})">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                            <polyline points="15 3 21 3 21 9"></polyline>
+                            <line x1="10" y1="14" x2="21" y2="3"></line>
+                        </svg>
+                        View Details
+                    </a>
+                    {% endif %}
+                    {% if not notification.is_read %}
+                    <button class="btn-small btn-small-secondary" onclick="markAsRead({{ notification.id }})">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                        </svg>
+                        Mark as Read
+                    </button>
+                    {% endif %}
+                </div>
             </div>
         </div>
+        {% endfor %}
     </div>
-    {% empty %}
-    <div class="card" style="text-align: center; padding: 60px;">
-        <div style="font-size: 48px; margin-bottom: 20px;">📭</div>
-        <p style="color: #86868b;">No notifications yet.</p>
+    {% else %}
+    <div class="empty-state">
+        <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#86868b" stroke-width="1" style="opacity:0.3;margin:0 auto 24px">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+        </svg>
+        <h2 style="margin-bottom: 12px; color: #1d1d1f;">No notifications yet</h2>
+        <p style="color: #86868b;">You're all caught up! Check back later for updates.</p>
     </div>
-    {% endfor %}
+    {% endif %}
 </div>
 {% endblock %}
 
@@ -142,6 +284,8 @@ function markAsRead(id) {
             card.classList.remove('unread');
             const btn = card.querySelector('button');
             if (btn) btn.remove();
+            const dot = card.querySelector('.notif-title svg');
+            if (dot) dot.remove();
             
             // Update badge
             const badge = document.getElementById('notifBadge');

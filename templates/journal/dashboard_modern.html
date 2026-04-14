@@ -1,0 +1,1093 @@
+{% extends 'base_apple.html' %}
+
+{% block title %}AI Dashboard - Mindful{% endblock %}
+
+{% block extra_css %}
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    :root {
+        --bg-dark: #0a0a0a;
+        --bg-card: #111111;
+        --text-primary: #ffffff;
+        --text-secondary: #888888;
+        --purple: #8b5cf6;
+        --blue: #3b82f6;
+        --glow-purple: rgba(139, 92, 246, 0.5);
+        --glow-blue: rgba(59, 130, 246, 0.5);
+    }
+
+    [data-theme="light"] {
+        --bg-dark: #ffffff;
+        --bg-card: #f8f9fa;
+        --text-primary: #0a0a0a;
+        --text-secondary: #666666;
+    }
+
+    body {
+        background: var(--bg-dark);
+        color: var(--text-primary);
+        font-family: 'Inter', sans-serif;
+        overflow-x: hidden;
+    }
+
+    .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 40px 24px 120px;
+    }
+
+    /* Theme Toggle */
+    .theme-toggle {
+        position: fixed;
+        top: 90px;
+        right: 32px;
+        z-index: 1000;
+        width: 56px;
+        height: 56px;
+        background: var(--bg-card);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 24px;
+        transition: all 0.3s;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    }
+
+    .theme-toggle:hover {
+        transform: scale(1.1);
+    }
+
+    /* Hero Section */
+    .hero {
+        position: relative;
+        padding: 80px 0 60px;
+        text-align: center;
+        overflow: hidden;
+    }
+
+    .hero::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: 20%;
+        width: 600px;
+        height: 600px;
+        background: radial-gradient(circle, var(--glow-purple) 0%, transparent 70%);
+        filter: blur(80px);
+        animation: float 8s ease-in-out infinite;
+    }
+
+    .hero::after {
+        content: '';
+        position: absolute;
+        top: -30%;
+        right: 20%;
+        width: 500px;
+        height: 500px;
+        background: radial-gradient(circle, var(--glow-blue) 0%, transparent 70%);
+        filter: blur(80px);
+        animation: float 10s ease-in-out infinite reverse;
+    }
+
+    @keyframes float {
+        0%, 100% { transform: translate(0, 0); }
+        50% { transform: translate(30px, -30px); }
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 1;
+    }
+
+    .hero h1 {
+        font-size: 72px;
+        font-weight: 900;
+        line-height: 1.1;
+        margin-bottom: 24px;
+        background: linear-gradient(135deg, #ffffff 0%, #888888 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    [data-theme="light"] .hero h1 {
+        background: linear-gradient(135deg, #0a0a0a 0%, #666666 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .hero .gradient-text {
+        background: linear-gradient(135deg, var(--purple) 0%, var(--blue) 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+        font-size: 20px;
+        color: var(--text-secondary);
+        max-width: 600px;
+        margin: 0 auto 40px;
+    }
+
+    .hero-cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        padding: 16px 32px;
+        background: linear-gradient(135deg, var(--purple) 0%, var(--blue) 100%);
+        color: white;
+        border-radius: 12px;
+        font-size: 16px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s;
+        box-shadow: 0 8px 32px var(--glow-purple);
+    }
+
+    .hero-cta:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 48px var(--glow-purple);
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 24px;
+        margin-bottom: 60px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .stat-card {
+        background: var(--bg-card);
+        padding: 40px;
+        border-radius: 24px;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s;
+    }
+
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, var(--purple) 0%, var(--blue) 100%);
+    }
+
+    .stat-card:hover {
+        transform: translateY(-8px);
+    }
+
+    .stat-card:hover::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle at center, var(--glow-purple) 0%, transparent 70%);
+        filter: blur(40px);
+        z-index: -1;
+    }
+
+    .stat-icon {
+        font-size: 48px;
+        margin-bottom: 20px;
+        filter: drop-shadow(0 0 20px var(--glow-purple));
+    }
+
+    .stat-label {
+        font-size: 14px;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-bottom: 12px;
+        font-weight: 600;
+    }
+
+    .stat-value {
+        font-size: 56px;
+        font-weight: 900;
+        background: linear-gradient(135deg, var(--purple) 0%, var(--blue) 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        line-height: 1;
+    }
+
+    /* AI Insights Section */
+    .ai-section {
+        background: var(--bg-card);
+        border-radius: 32px;
+        padding: 60px;
+        margin-bottom: 60px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .ai-section::before {
+        content: '';
+        position: absolute;
+        top: -100px;
+        right: -100px;
+        width: 400px;
+        height: 400px;
+        background: radial-gradient(circle, var(--glow-purple) 0%, transparent 70%);
+        filter: blur(60px);
+    }
+
+    .ai-section-header {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 32px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .ai-badge {
+        padding: 8px 20px;
+        background: linear-gradient(135deg, var(--purple) 0%, var(--blue) 100%);
+        color: white;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        box-shadow: 0 4px 16px var(--glow-purple);
+    }
+
+    .ai-section h2 {
+        font-size: 36px;
+        font-weight: 800;
+        position: relative;
+        z-index: 1;
+    }
+
+    .ai-section p {
+        font-size: 18px;
+        color: var(--text-secondary);
+        line-height: 1.8;
+        max-width: 800px;
+        position: relative;
+        z-index: 1;
+    }
+
+    /* Chart Section */
+    .chart-section {
+        background: var(--bg-card);
+        border-radius: 32px;
+        padding: 60px;
+        margin-bottom: 60px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .chart-section::before {
+        content: '';
+        position: absolute;
+        bottom: -100px;
+        left: -100px;
+        width: 400px;
+        height: 400px;
+        background: radial-gradient(circle, var(--glow-blue) 0%, transparent 70%);
+        filter: blur(60px);
+    }
+
+    .chart-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 40px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .chart-header h2 {
+        font-size: 32px;
+        font-weight: 800;
+    }
+
+    .download-btn {
+        padding: 12px 24px;
+        background: var(--bg-dark);
+        color: var(--text-primary);
+        border-radius: 12px;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s;
+    }
+
+    .download-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    }
+
+    .chart-container {
+        position: relative;
+        height: 400px;
+        z-index: 1;
+    }
+
+    /* Entries Section */
+    .entries-section {
+        background: var(--bg-card);
+        border-radius: 32px;
+        padding: 60px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .entries-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 40px;
+    }
+
+    .entries-header h2 {
+        font-size: 32px;
+        font-weight: 800;
+    }
+
+    .new-entry-btn {
+        padding: 12px 28px;
+        background: linear-gradient(135deg, var(--purple) 0%, var(--blue) 100%);
+        color: white;
+        border-radius: 12px;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s;
+        box-shadow: 0 4px 16px var(--glow-purple);
+    }
+
+    .new-entry-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 32px var(--glow-purple);
+    }
+
+    .entry-item {
+        padding: 32px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        transition: all 0.3s;
+    }
+
+    [data-theme="light"] .entry-item {
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .entry-item:hover {
+        padding-left: 20px;
+    }
+
+    .entry-date {
+        font-size: 13px;
+        color: var(--text-secondary);
+        margin-bottom: 12px;
+        font-weight: 500;
+    }
+
+    .emotion-badge {
+        display: inline-block;
+        padding: 8px 20px;
+        background: rgba(139, 92, 246, 0.1);
+        color: var(--purple);
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 80px 20px;
+    }
+
+    .empty-state-icon {
+        font-size: 64px;
+        margin-bottom: 24px;
+        filter: grayscale(1);
+        opacity: 0.3;
+    }
+
+    .empty-state p {
+        font-size: 18px;
+        color: var(--text-secondary);
+        margin-bottom: 32px;
+    }
+
+    /* Floating AI Chat Button */
+    .ai-chat-fab {
+        position: fixed;
+        bottom: 40px;
+        right: 40px;
+        width: 72px;
+        height: 72px;
+        background: linear-gradient(135deg, var(--purple) 0%, var(--blue) 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 36px;
+        cursor: pointer;
+        z-index: 1000;
+        transition: all 0.3s;
+        box-shadow: 0 8px 32px var(--glow-purple);
+        animation: pulse-glow 3s ease-in-out infinite;
+    }
+
+    @keyframes pulse-glow {
+        0%, 100% {
+            box-shadow: 0 8px 32px var(--glow-purple);
+        }
+        50% {
+            box-shadow: 0 8px 48px var(--glow-purple), 0 0 0 12px rgba(139, 92, 246, 0.1);
+        }
+    }
+
+    .ai-chat-fab:hover {
+        transform: scale(1.1);
+    }
+
+    /* AI Chat Modal */
+    .ai-chat-modal {
+        position: fixed;
+        bottom: 40px;
+        right: 40px;
+        width: 440px;
+        height: 640px;
+        background: var(--bg-card);
+        border-radius: 24px;
+        box-shadow: 0 20px 80px rgba(0, 0, 0, 0.6);
+        z-index: 999;
+        display: none;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    .ai-chat-modal.active {
+        display: flex;
+        animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px) scale(0.95);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+
+    .ai-chat-header {
+        background: linear-gradient(135deg, var(--purple) 0%, var(--blue) 100%);
+        padding: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        color: white;
+    }
+
+    .ai-chat-title h3 {
+        font-size: 18px;
+        font-weight: 700;
+        margin-bottom: 4px;
+    }
+
+    .ai-status {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12px;
+        opacity: 0.9;
+    }
+
+    .status-dot {
+        width: 8px;
+        height: 8px;
+        background: #34c759;
+        border-radius: 50%;
+        animation: blink 2s infinite;
+    }
+
+    @keyframes blink {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.3; }
+    }
+
+    .ai-chat-close {
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        color: white;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 24px;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .ai-chat-close:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: rotate(90deg);
+    }
+
+    .ai-chat-messages {
+        flex: 1;
+        overflow-y: auto;
+        padding: 24px;
+        background: var(--bg-dark);
+    }
+
+    .ai-chat-messages::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .ai-chat-messages::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+    }
+
+    .chat-message {
+        margin-bottom: 20px;
+        display: flex;
+        gap: 12px;
+        animation: messageSlide 0.3s ease-out;
+    }
+
+    @keyframes messageSlide {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .chat-message.user {
+        flex-direction: row-reverse;
+    }
+
+    .chat-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        flex-shrink: 0;
+        background: linear-gradient(135deg, var(--purple) 0%, var(--blue) 100%);
+    }
+
+    .chat-bubble {
+        max-width: 70%;
+        padding: 14px 18px;
+        border-radius: 16px;
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    .chat-message.bot .chat-bubble {
+        background: var(--bg-card);
+        color: var(--text-primary);
+    }
+
+    .chat-message.user .chat-bubble {
+        background: linear-gradient(135deg, var(--purple) 0%, var(--blue) 100%);
+        color: white;
+    }
+
+    .typing-indicator {
+        display: none;
+        padding: 14px 18px;
+        background: var(--bg-card);
+        border-radius: 16px;
+        width: fit-content;
+    }
+
+    .typing-indicator.active {
+        display: flex;
+        gap: 6px;
+    }
+
+    .typing-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--purple) 0%, var(--blue) 100%);
+        animation: typing 1.4s infinite;
+    }
+
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes typing {
+        0%, 60%, 100% {
+            transform: translateY(0);
+            opacity: 0.7;
+        }
+        30% {
+            transform: translateY(-10px);
+            opacity: 1;
+        }
+    }
+
+    .ai-chat-input {
+        padding: 24px;
+        background: var(--bg-card);
+        display: flex;
+        gap: 12px;
+    }
+
+    .ai-chat-input input {
+        flex: 1;
+        padding: 14px 20px;
+        background: var(--bg-dark);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        color: var(--text-primary);
+        font-size: 14px;
+        outline: none;
+        transition: all 0.3s;
+    }
+
+    .ai-chat-input input:focus {
+        border-color: var(--purple);
+        box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+    }
+
+    .ai-chat-send {
+        background: linear-gradient(135deg, var(--purple) 0%, var(--blue) 100%);
+        border: none;
+        color: white;
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        cursor: pointer;
+        font-size: 20px;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .ai-chat-send:hover:not(:disabled) {
+        transform: scale(1.05);
+    }
+
+    .ai-chat-send:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    @media (max-width: 768px) {
+        .hero h1 {
+            font-size: 48px;
+        }
+
+        .ai-chat-modal {
+            bottom: 0;
+            right: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 0;
+        }
+
+        .ai-chat-fab {
+            bottom: 100px;
+        }
+
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .ai-section,
+        .chart-section,
+        .entries-section {
+            padding: 40px 24px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Theme Toggle -->
+<div class="theme-toggle" id="themeToggle">
+    <span id="themeIcon">🌙</span>
+</div>
+
+<!-- Hero Section -->
+<div class="hero">
+    <div class="hero-content">
+        <h1>
+            Your <span class="gradient-text">AI-Powered</span><br>
+            Mental Wellness
+        </h1>
+        <p>
+            Advanced AI technology meets compassionate care. 
+            Track, analyze, and improve your mental health journey.
+        </p>
+        <a href="{% url 'journal:new_entry' %}" class="hero-cta">
+            <span>✍️</span>
+            <span>Start New Entry</span>
+        </a>
+    </div>
+</div>
+
+<!-- Stats Grid -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon">📊</div>
+        <div class="stat-label">Total Entries</div>
+        <div class="stat-value">{{ recent_logs|length }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">📅</div>
+        <div class="stat-label">This Week</div>
+        <div class="stat-value">{{ recent_logs|length }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">🔥</div>
+        <div class="stat-label">Current Streak</div>
+        <div class="stat-value">{{ recent_logs|length }}</div>
+    </div>
+</div>
+
+<!-- AI Insights -->
+<div class="ai-section">
+    <div class="ai-section-header">
+        <span class="ai-badge">AI Powered</span>
+    </div>
+    <h2>Intelligent Insights</h2>
+    <p>
+        Our advanced AI analyzes your mood patterns, identifies trends, and provides 
+        personalized recommendations to support your mental wellness journey. 
+        Get real-time insights and compassionate support whenever you need it.
+    </p>
+</div>
+
+<!-- Mood Chart -->
+<div class="chart-section">
+    <div class="chart-header">
+        <h2>Mood Analytics</h2>
+        <a href="{% url 'journal:download_report_pdf' %}" class="download-btn">
+            📥 Download Report
+        </a>
+    </div>
+    <div class="chart-container">
+        <canvas id="moodChart"></canvas>
+    </div>
+</div>
+
+<!-- Recent Entries -->
+<div class="entries-section">
+    <div class="entries-header">
+        <h2>Recent Entries</h2>
+        <a href="{% url 'journal:new_entry' %}" class="new-entry-btn">
+            ✍️ New Entry
+        </a>
+    </div>
+    
+    {% for log in recent_logs %}
+    <div class="entry-item">
+        <div class="entry-date">{{ log.timestamp|date:"F d, Y - g:i A" }}</div>
+        <span class="emotion-badge">{{ log.dominant_emotion|title }}</span>
+        {% if log.alert_text %}
+        <div class="alert alert-warning" style="margin-top: 16px;">{{ log.alert_text }}</div>
+        {% endif %}
+    </div>
+    {% empty %}
+    <div class="empty-state">
+        <div class="empty-state-icon">✍️</div>
+        <p>No entries yet. Start your wellness journey today.</p>
+        <a href="{% url 'journal:new_entry' %}" class="hero-cta">Create First Entry</a>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Floating AI Chat Button -->
+<div class="ai-chat-fab" id="aiChatFab">
+    🤖
+</div>
+
+<!-- AI Chat Modal -->
+<div class="ai-chat-modal" id="aiChatModal">
+    <div class="ai-chat-header">
+        <div class="ai-chat-title">
+            <h3>AI Wellness Companion</h3>
+            <div class="ai-status">
+                <span class="status-dot"></span>
+                <span>Online & Ready</span>
+            </div>
+        </div>
+        <button class="ai-chat-close" id="aiChatClose">×</button>
+    </div>
+    
+    <div class="ai-chat-messages" id="aiChatMessages">
+        <div class="chat-message bot">
+            <div class="chat-avatar">🤖</div>
+            <div class="chat-bubble">
+                Hi! I'm your AI wellness companion. How are you feeling today? I'm here to listen and support you. 💙
+            </div>
+        </div>
+    </div>
+    
+    <div class="typing-indicator" id="typingIndicator">
+        <span class="typing-dot"></span>
+        <span class="typing-dot"></span>
+        <span class="typing-dot"></span>
+    </div>
+    
+    <div class="ai-chat-input">
+        <input 
+            type="text" 
+            id="aiChatInput" 
+            placeholder="Share your thoughts..."
+            autocomplete="off"
+        />
+        <button class="ai-chat-send" id="aiChatSend">➤</button>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+// Theme Toggle
+const themeToggle = document.getElementById('themeToggle');
+const themeIcon = document.getElementById('themeIcon');
+const html = document.documentElement;
+
+const savedTheme = localStorage.getItem('theme') || 'dark';
+html.setAttribute('data-theme', savedTheme);
+themeIcon.textContent = savedTheme === 'dark' ? '🌙' : '☀️';
+
+themeToggle.addEventListener('click', () => {
+    const currentTheme = html.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    
+    html.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+    themeIcon.textContent = newTheme === 'dark' ? '🌙' : '☀️';
+    
+    if (window.moodChart) {
+        window.moodChart.destroy();
+        loadChart();
+    }
+});
+
+// AI Chat Modal
+const aiChatFab = document.getElementById('aiChatFab');
+const aiChatModal = document.getElementById('aiChatModal');
+const aiChatClose = document.getElementById('aiChatClose');
+const aiChatInput = document.getElementById('aiChatInput');
+const aiChatSend = document.getElementById('aiChatSend');
+const aiChatMessages = document.getElementById('aiChatMessages');
+const typingIndicator = document.getElementById('typingIndicator');
+
+let isProcessing = false;
+
+aiChatFab.addEventListener('click', () => {
+    aiChatModal.classList.add('active');
+    aiChatFab.style.display = 'none';
+    aiChatInput.focus();
+});
+
+aiChatClose.addEventListener('click', () => {
+    aiChatModal.classList.remove('active');
+    aiChatFab.style.display = 'flex';
+});
+
+function addMessage(content, isUser = false) {
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `chat-message ${isUser ? 'user' : 'bot'}`;
+    
+    const avatar = document.createElement('div');
+    avatar.className = 'chat-avatar';
+    avatar.textContent = isUser ? '👤' : '🤖';
+    
+    const bubble = document.createElement('div');
+    bubble.className = 'chat-bubble';
+    bubble.textContent = content;
+    
+    messageDiv.appendChild(avatar);
+    messageDiv.appendChild(bubble);
+    aiChatMessages.appendChild(messageDiv);
+    
+    aiChatMessages.scrollTo({
+        top: aiChatMessages.scrollHeight,
+        behavior: 'smooth'
+    });
+}
+
+async function sendMessage() {
+    if (isProcessing) return;
+    
+    const message = aiChatInput.value.trim();
+    if (!message) return;
+    
+    addMessage(message, true);
+    aiChatInput.value = '';
+    
+    isProcessing = true;
+    aiChatSend.disabled = true;
+    aiChatInput.disabled = true;
+    typingIndicator.classList.add('active');
+    
+    try {
+        const response = await fetch('{% url "journal:chatbot_api" %}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({ message })
+        });
+        
+        const data = await response.json();
+        typingIndicator.classList.remove('active');
+        
+        if (data.response) {
+            addMessage(data.response, false);
+        } else {
+            addMessage("I'm having trouble responding right now. Could you try again? 💙", false);
+        }
+        
+    } catch (error) {
+        typingIndicator.classList.remove('active');
+        addMessage("I'm experiencing connectivity issues. Please check your connection. ✨", false);
+    } finally {
+        isProcessing = false;
+        aiChatSend.disabled = false;
+        aiChatInput.disabled = false;
+        aiChatInput.focus();
+    }
+}
+
+aiChatSend.addEventListener('click', sendMessage);
+aiChatInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+    }
+});
+
+// Mood Chart
+function loadChart() {
+    fetch('{% url "journal:mood_data_api" %}')
+        .then(res => res.json())
+        .then(data => {
+            const ctx = document.getElementById('moodChart').getContext('2d');
+            const isDark = html.getAttribute('data-theme') === 'dark';
+            
+            const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+            gradient.addColorStop(0, 'rgba(139, 92, 246, 0.4)');
+            gradient.addColorStop(1, 'rgba(59, 130, 246, 0.0)');
+            
+            window.moodChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        label: 'Sentiment',
+                        data: data.sentiment,
+                        borderColor: '#8b5cf6',
+                        backgroundColor: gradient,
+                        tension: 0.4,
+                        fill: true,
+                        borderWidth: 3,
+                        pointRadius: 0,
+                        pointHoverRadius: 8,
+                        pointBackgroundColor: '#8b5cf6',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointHoverBackgroundColor: '#8b5cf6',
+                        pointHoverBorderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: isDark ? '#111111' : '#ffffff',
+                            titleColor: isDark ? '#ffffff' : '#0a0a0a',
+                            bodyColor: isDark ? '#ffffff' : '#0a0a0a',
+                            borderColor: isDark ? '#333333' : '#e5e5e5',
+                            borderWidth: 1,
+                            padding: 16,
+                            cornerRadius: 12,
+                            displayColors: false,
+                            callbacks: {
+                                label: function(context) {
+                                    return [
+                                        `Sentiment: ${context.parsed.y.toFixed(2)}`,
+                                        `Mood: ${data.emotions[context.dataIndex]}`
+                                    ];
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: { 
+                            beginAtZero: true, 
+                            min: -1.1, 
+                            max: 1.1,
+                            grid: { 
+                                color: isDark ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                color: isDark ? '#888888' : '#666666',
+                                font: { size: 12 },
+                                callback: function(value) {
+                                    if (value === 1) return 'High';
+                                    if (value === 0) return 'Neutral';
+                                    if (value === -1) return 'Low';
+                                    return '';
+                                }
+                            }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: {
+                                color: isDark ? '#888888' : '#666666',
+                                font: { size: 11 },
+                                maxRotation: 0,
+                                autoSkip: true,
+                                maxTicksLimit: 7
+                            }
+                        }
+                    }
+                }
+            });
+        })
+        .catch(err => console.error('Chart loading error:', err));
+}
+
+window.addEventListener('load', loadChart);
+</script>
+{% endblock %}

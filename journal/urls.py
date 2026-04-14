@@ -9,6 +9,7 @@ urlpatterns = [
     path('new-entry/', views.new_entry, name='new_entry'),
     path('history/', views.history, name='history'),
     path('api/mood-data/', views.mood_data_api, name='mood_data_api'),
+    path('api/chatbot/', views.chatbot_api, name='chatbot_api'),
     path('notifications/', views.notifications_view, name='notifications'),
     path('notifications/mark-read/<int:pk>/', views.mark_notification_read, name='mark_notification_read'),
     path('profile/', profile_views.profile, name='profile'),

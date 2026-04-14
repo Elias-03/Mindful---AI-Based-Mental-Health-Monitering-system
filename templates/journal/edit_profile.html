@@ -4,8 +4,19 @@
 
 {% block extra_css %}
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+:root{--bg:#0a0a0a;--card:#111;--text:#fff;--text-sec:#888;--purple:#8b5cf6;--blue:#3b82f6;--glow-p:rgba(139,92,246,.5);--glow-b:rgba(59,130,246,.5)}
+[data-theme="light"]{--bg:#fff;--card:#f8f9fa;--text:#0a0a0a;--text-sec:#666}
+body{background:var(--bg);color:var(--text);font-family:Inter,sans-serif}
+.container{max-width:1200px;padding:40px 24px 120px}
+.theme-toggle{position:fixed;top:90px;right:32px;z-index:1000;width:56px;height:56px;background:var(--card);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .3s;box-shadow:0 8px 32px rgba(0,0,0,.4)}
+.theme-toggle:hover{transform:scale(1.1)}
+.card{background:var(--card);border-radius:32px;padding:60px;position:relative;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.4)}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--purple) 0%,var(--blue) 100%)}
+.card h2{font-size:32px;font-weight:800;color:var(--text)}
+.card .subtitle{color:var(--text-sec);font-size:16px}
     .edit-container {
-        width: 100%;
+        max-width: 800px;
         margin: 0 auto;
     }
     
@@ -15,12 +26,22 @@
     }
     
     .preview-avatar {
-        width: 100px;
-        height: 100px;
+        width: 120px;
+        height: 120px;
         border-radius: 50%;
         object-fit: cover;
-        margin-bottom: 16px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        margin: 0 auto 16px;
+        box-shadow: 0 8px 32px rgba(139,92,246,.4);
+        background: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 24px;
     }
     
     .form-group {
@@ -30,26 +51,35 @@
     .form-label {
         display: block;
         font-size: 14px;
-        font-weight: 500;
-        color: #1d1d1f;
+        font-weight: 600;
+        color: var(--text);
         margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
     }
     
     .form-input {
         width: 100%;
         padding: 14px 16px;
-        border: 1px solid #d2d2d7;
+        border: 1px solid rgba(255,255,255,.1);
         border-radius: 12px;
         font-size: 16px;
         font-family: inherit;
         transition: all 0.2s;
+        background: rgba(255,255,255,.05);
+        color: var(--text);
+    }
+
+    [data-theme="light"] .form-input {
         background: white;
+        border-color: #d2d2d7;
     }
     
     .form-input:focus {
         outline: none;
-        border-color: #0071e3;
-        box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.1);
+        border-color: var(--purple);
+        box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.2);
     }
     
     .file-input-wrapper {
@@ -64,19 +94,23 @@
     }
     
     .file-input-label {
-        display: inline-block;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
         padding: 12px 24px;
-        background: #f5f5f7;
-        color: #1d1d1f;
+        background: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%);
+        color: white;
         border-radius: 980px;
         cursor: pointer;
         font-size: 14px;
-        font-weight: 500;
+        font-weight: 600;
         transition: all 0.2s;
+        box-shadow: 0 4px 16px rgba(139,92,246,.4);
     }
     
     .file-input-label:hover {
-        background: #e8e8ed;
+        transform: scale(1.02);
+        box-shadow: 0 8px 32px rgba(139,92,246,.6);
     }
     
     .button-group {
@@ -84,49 +118,179 @@
         gap: 12px;
         margin-top: 32px;
     }
+
+    .btn-primary {
+        background: linear-gradient(135deg, var(--purple) 0%, var(--blue) 100%);
+        color: white;
+        padding: 14px 32px;
+        border-radius: 980px;
+        border: none;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        box-shadow: 0 4px 16px rgba(139,92,246,.4);
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 32px rgba(139,92,246,.6);
+    }
+
+    .btn-secondary {
+        background: var(--card);
+        color: var(--text);
+        padding: 14px 32px;
+        border-radius: 980px;
+        text-decoration: none;
+        font-size: 16px;
+        font-weight: 500;
+        transition: all 0.2s;
+        border: 1px solid rgba(255,255,255,.1);
+    }
+
+    .btn-secondary:hover {
+        background: rgba(255,255,255,.05);
+        transform: translateY(-2px);
+    }
+
+    @media (max-width: 768px) {
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+        .button-group {
+            flex-direction: column;
+        }
+        .btn-primary, .btn-secondary {
+            width: 100%;
+            text-align: center;
+        }
+        .card{padding:40px 24px}
+    }
 </style>
 {% endblock %}
 
 {% block content %}
+<div class="theme-toggle" id="themeToggle">
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="themeIcon">
+<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+</svg>
+</div>
+
 <div class="edit-container">
     <div class="card">
-        <h2>Edit Profile</h2>
-        <p class="subtitle" style="margin-bottom: 32px;">Update your personal information</p>
+        <h2 style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="url(#gradEdit)" stroke-width="2">
+                <defs><linearGradient id="gradEdit" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#8b5cf6"/><stop offset="100%" style="stop-color:#3b82f6"/>
+                </linearGradient></defs>
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+            </svg>
+            Edit Profile
+        </h2>
+        <p class="subtitle" style="margin-bottom: 32px;display:flex;align-items:center;gap:8px">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M12 16v-4"></path>
+                <path d="M12 8h.01"></path>
+            </svg>
+            Update your personal information
+        </p>
         
         <div class="profile-preview">
-            <img src="{{ profile.get_avatar_url }}" alt="{{ user.username }}" class="preview-avatar" id="avatarPreview">
+            <div class="preview-avatar" id="avatarPreview">
+                <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+            </div>
         </div>
         
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
             
             <div class="form-group">
-                <label class="form-label">Profile Picture</label>
+                <label class="form-label">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                        <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                        <polyline points="21 15 16 10 5 21"></polyline>
+                    </svg>
+                    Profile Picture
+                </label>
                 <div class="file-input-wrapper">
                     <input type="file" name="profile_picture" id="profilePicture" accept="image/*">
-                    <label for="profilePicture" class="file-input-label">Choose Photo</label>
+                    <label for="profilePicture" class="file-input-label">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                        Choose Photo
+                    </label>
                 </div>
-                <p style="font-size: 13px; color: #86868b; margin-top: 8px;">JPG, PNG or GIF. Max 5MB.</p>
+                <p style="font-size: 13px; color: #86868b; margin-top: 8px;display:flex;align-items:center;gap:6px">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="M12 16v-4"></path>
+                        <path d="M12 8h.01"></path>
+                    </svg>
+                    JPG, PNG or GIF. Max 5MB.
+                </p>
+            </div>
+            
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label" for="first_name">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        First Name
+                    </label>
+                    <input type="text" name="first_name" id="first_name" class="form-input" value="{{ user.first_name }}" placeholder="Enter first name">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="last_name">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        Last Name
+                    </label>
+                    <input type="text" name="last_name" id="last_name" class="form-input" value="{{ user.last_name }}" placeholder="Enter last name">
+                </div>
             </div>
             
             <div class="form-group">
-                <label class="form-label" for="first_name">First Name</label>
-                <input type="text" name="first_name" id="first_name" class="form-input" value="{{ user.first_name }}">
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label" for="last_name">Last Name</label>
-                <input type="text" name="last_name" id="last_name" class="form-input" value="{{ user.last_name }}">
-            </div>
-            
-            <div class="form-group">
-                <label class="form-label" for="email">Email</label>
-                <input type="email" name="email" id="email" class="form-input" value="{{ user.email }}">
+                <label class="form-label" for="email">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                        <polyline points="22,6 12,13 2,6"></polyline>
+                    </svg>
+                    Email
+                </label>
+                <input type="email" name="email" id="email" class="form-input" value="{{ user.email }}" placeholder="your@email.com">
             </div>
             
             <div class="button-group">
-                <button type="submit" class="btn-primary">Save Changes</button>
-                <a href="{% url 'journal:profile' %}" class="btn-secondary">Cancel</a>
+                <button type="submit" class="btn-primary" style="display:flex;align-items:center;justify-content:center;gap:8px">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                        <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                        <polyline points="7 3 7 8 15 8"></polyline>
+                    </svg>
+                    Save Changes
+                </button>
+                <a href="{% url 'journal:profile' %}" class="btn-secondary" style="display:flex;align-items:center;justify-content:center;gap:8px">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                    Cancel
+                </a>
             </div>
         </form>
     </div>
@@ -138,10 +302,20 @@ document.getElementById('profilePicture').addEventListener('change', function(e)
     if (file) {
         const reader = new FileReader();
         reader.onload = function(e) {
-            document.getElementById('avatarPreview').src = e.target.result;
+            const preview = document.getElementById('avatarPreview');
+            preview.style.backgroundImage = `url(${e.target.result})`;
+            preview.style.backgroundSize = 'cover';
+            preview.style.backgroundPosition = 'center';
+            preview.innerHTML = '';
         }
         reader.readAsDataURL(file);
     }
 });
+</script>
+<script>
+const t=document.getElementById('themeToggle'),i=document.getElementById('themeIcon'),h=document.documentElement,s=localStorage.getItem('theme')||'dark';
+h.setAttribute('data-theme',s);
+i.innerHTML=s==='dark'?'<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>':'<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>';
+t.addEventListener('click',()=>{const c=h.getAttribute('data-theme'),n=c==='dark'?'light':'dark';h.setAttribute('data-theme',n);localStorage.setItem('theme',n);i.innerHTML=n==='dark'?'<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>':'<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>'});
 </script>
 {% endblock %}
