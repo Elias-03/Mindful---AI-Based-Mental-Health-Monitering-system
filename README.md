@@ -1,4 +1,4 @@
-# 🧠 Mindful - AI Mental Health Tracker
+# 🧠 Mindful -  AI Mental Health Tracker
 
 Mindful is a modern, AI-powered mental health monitoring system designed to help users track their emotional well-being through journaling and advanced sentiment analysis.
 
