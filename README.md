@@ -4,7 +4,7 @@ Mindful is a modern, AI-powered mental health monitoring system designed to help
 
 Created by **[Blessing Zimbango Elias](https://www.linkedin.com/in/blessing-zimbango-elias/)**
 
-Contributors **[Rittik](https://github.com/hritik-coder07)** & 
+Contributors **[Rittik](https://github.com/hritik-coder07)** & **[Shivangi](https://github.com/shivangii532003-maker)**
 
 ## Setup Instructions
 Copy `.env` from `.env.example` and use your own API keys.
