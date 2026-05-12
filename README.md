@@ -67,3 +67,4 @@ Visit `http://127.0.0.1:8000` to start tracking your mood!
 ---
 
 🔗 Connect with me on [LinkedIn](https://www.linkedin.com/in/blessing-zimbango-elias/)
+Thank you
